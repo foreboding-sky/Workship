@@ -1,6 +1,59 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using Workshop.Data;
+using Workshop.Models;
+using AutoMapper;
+using FluentValidation;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddMvc(options => options.EnableEndpointRouting = false);
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=Workshop.db"));
+builder.Services.AddTransient<IWorkshopRepository, WorkshopRepository>();
+builder.Services.AddAutoMapper(typeof(Program));
+//builder.Services.AddSpaStaticFiles(configuration => configuration.RootPath = "frontend/build");
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseStaticFiles();
+app.UseRouting();
+
+app.UseHttpsRedirection();
+
+//app.UseAuthorization();
+
+app.MapControllers();
+
+app.UseCors(builder =>
+    builder
+    .AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .SetIsOriginAllowed(origin => true)
+);
+
+app.UseEndpoints(endpoints => endpoints.MapControllers());
+
+// app.UseSpa(spa =>
+//           {
+//               spa.Options.SourcePath = "frontend";
+//               if (app.Environment.IsDevelopment())
+//               {
+//                   spa.UseReactDevelopmentServer(npmScript: "start");
+//               }
+//           });
 
 app.Run();
