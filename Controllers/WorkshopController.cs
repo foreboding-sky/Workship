@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Workshop.Data;
+using AutoMapper;
+using Workshop.Models;
 
 namespace Workshop.Controllers
 {
@@ -8,10 +10,12 @@ namespace Workshop.Controllers
     public class NotesController : ControllerBase
     {
         private readonly IWorkshopRepository repository;
+        private readonly IMapper mapper;
 
-        public NotesController(IWorkshopRepository repository)
+        public NotesController(IWorkshopRepository repository, IMapper mapper)
         {
             this.repository = repository;
+            this.mapper = mapper;
         }
 
         [HttpGet("")]
@@ -28,18 +32,18 @@ namespace Workshop.Controllers
             return Ok();
         }
 
-        // [HttpPost("")]
-        // public async Task<IActionResult> AddOrder([FromBody] OrderCreateDto orderDto)
-        // {
-        //     if (!ModelState.IsValid)
-        //     {
-        //         return BadRequest();
-        //     }
-        //     Order tmp = mapper.Map<Order>(d);
-        //     tmp.Id = Guid.NewGuid();
-        //     await repository.CreateOrder(tmp);
-        //     return Ok(tmp);
-        // }
+        [HttpPost("")]
+        public async Task<IActionResult> AddOrder([FromBody] OrderCreateDto orderDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            Order tmp = mapper.Map<Order>(orderDto);
+            tmp.Id = Guid.NewGuid();
+            await repository.CreateOrder(tmp);
+            return Ok(tmp);
+        }
         [HttpPost("{id}")]
         public async Task<IActionResult> ChangeNoteStatus(Guid id)
         {
