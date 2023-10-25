@@ -45,7 +45,7 @@ namespace Workshop.Controllers
             return Ok(tmp);
         }
         [HttpPost("{id}")]
-        public async Task<IActionResult> ChangeNoteStatus(Guid id)
+        public async Task<IActionResult> ChangeOrderStatus(Guid id)
         {
             if (!ModelState.IsValid)
             {
