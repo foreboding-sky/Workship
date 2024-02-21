@@ -8,11 +8,10 @@ namespace Workshop.Data
 {
     public interface IWorkshopRepository
     {
-        public Task<Order> CreateOrder(Order order);
-        public Task DeleteOrder(Guid id);
-        public Task<List<Order>> GetAllOrders();
-        public Task<Order> GetOrderById(Guid id);
-        public Task<Order> ChangeOrderStatus(Guid id);
-        public Task<Order> UpdateOrder(Order order);
+        public Task<Order> CreateRepair(Order order);
+        public Task DeleteRepair(Guid id);
+        public Task<List<Order>> GetAllRepairs();
+        public Task<Order> GetRepairById(Guid id);
+        public Task<Order> UpdateRepair(Order order);
     }
 }

@@ -19,21 +19,21 @@ namespace Workshop.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> GetAllOrders()
+        public async Task<IActionResult> GetAllRepairs()
         {
-            var notes = await repository.GetAllOrders();
-            return Ok(notes);
+            var repairs = await repository.GetAllRepairs();
+            return Ok(repairs);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrder(Guid id)
+        public async Task<IActionResult> DeleteRepair(Guid id)
         {
-            await repository.DeleteOrder(id);
+            await repository.DeleteRepair(id);
             return Ok();
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> AddOrder([FromBody] OrderCreateDto orderDto)
+        public async Task<IActionResult> AddRepair([FromBody] OrderCreateDto orderDto)
         {
             if (!ModelState.IsValid)
             {
@@ -41,18 +41,8 @@ namespace Workshop.Controllers
             }
             Order tmp = mapper.Map<Order>(orderDto);
             tmp.Id = Guid.NewGuid();
-            await repository.CreateOrder(tmp);
+            await repository.CreateRepair(tmp);
             return Ok(tmp);
-        }
-        [HttpPost("{id}")]
-        public async Task<IActionResult> ChangeOrderStatus(Guid id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-            await repository.ChangeOrderStatus(id);
-            return Ok(await repository.GetOrderById(id));
         }
     }
 }

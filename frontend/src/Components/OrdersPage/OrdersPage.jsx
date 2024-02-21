@@ -5,14 +5,13 @@ import axios from 'axios';
 
 const { Column, ColumnGroup } = Table;
 
-
 const MainPage = () => {
     useEffect(() => {
-        console.log("sas");
-        // axios.get("/api/Workshop").then(res => {
-        //     setArray(res.data);
-        //     console.log(res.data);
-        // });
+        console.log("orders page axios get all");
+        axios.get("/api/Workshop").then(res => {
+            setArray(res.data);
+            console.log(res.data);
+        });
     }, []);
 
     const [array, setArray] = useState([]);

@@ -18,11 +18,9 @@ const AppLayout = ({ children }) => {
                     defaultSelectedKeys={['1']}
                     theme="dark"
                     mode="vertical" items={items} />
-
             </Sider>
-
             <Layout>
-                <Header style={{ position: 'sticky', top: 0, zIndex: 1, width: '100%' }}>
+                <Header style={{ position: 'sticky', top: 0, zIndex: 1, width: '100%', color: "white", fontSize: "20pt" }}>
                     Workshop
                 </Header>
 

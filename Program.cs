@@ -10,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMvc(options => options.EnableEndpointRouting = false);
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 // builder.Services.AddEndpointsApiExplorer();
@@ -20,7 +19,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=Workshop.db"));
 builder.Services.AddTransient<IWorkshopRepository, WorkshopRepository>();
+builder.Services.AddTransient<IOrdersRepository, OrdersRepository>();
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddControllers();
 builder.Services.AddSpaStaticFiles(configuration => configuration.RootPath = "frontend/build");
 var app = builder.Build();
 
@@ -39,7 +40,8 @@ app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 //app.UseAuthorization();
-app.MapControllers();
+// app.MapControllers();
+app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.UseCors(builder =>
     builder
@@ -48,8 +50,6 @@ app.UseCors(builder =>
     .AllowAnyMethod()
     .SetIsOriginAllowed(origin => true)
 );
-
-//app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.UseSpa(spa =>
           {
