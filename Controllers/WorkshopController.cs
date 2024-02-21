@@ -7,12 +7,12 @@ namespace Workshop.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NotesController : ControllerBase
+    public class WorkshopController : ControllerBase
     {
         private readonly IWorkshopRepository repository;
         private readonly IMapper mapper;
 
-        public NotesController(IWorkshopRepository repository, IMapper mapper)
+        public WorkshopController(IWorkshopRepository repository, IMapper mapper)
         {
             this.repository = repository;
             this.mapper = mapper;

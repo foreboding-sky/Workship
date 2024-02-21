@@ -9,13 +9,12 @@ const { Column, ColumnGroup } = Table;
 const MainPage = () => {
     useEffect(() => {
         console.log("sas");
-        axios.get("/api/Workshop").then(res => {
-            setArray(res.data);
-            console.log(res.data);
-        });
+        // axios.get("/api/Workshop").then(res => {
+        //     setArray(res.data);
+        //     console.log(res.data);
+        // });
     }, []);
 
-    const [count, setCount] = useState(0);
     const [array, setArray] = useState([]);
 
     const ChangeStatus = (record) => {
