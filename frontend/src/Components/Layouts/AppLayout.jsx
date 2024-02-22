@@ -6,9 +6,9 @@ const { Header, Content, Footer, Sider } = Layout;
 const AppLayout = ({ children }) => {
 
     const items = [
-        { label: <Link to='/'>Repairs</Link>, key: '1' }, // remember to pass the key prop
-        { label: <Link to='/orders'>Orders</Link>, key: '2' }, // which is required
-        { label: <Link to='/storage'>Storage</Link>, key: '3' }, // which is required
+        { label: <Link to='/'>Repairs</Link>, key: '1' },
+        { label: <Link to='/orders'>Orders</Link>, key: '2' },
+        { label: <Link to='/storage'>Storage</Link>, key: '3' },
     ]
 
     return (
