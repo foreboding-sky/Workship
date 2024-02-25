@@ -38,14 +38,14 @@ namespace Workshop.Data
         public async Task<Order> ChangeOrderStatus(Guid id)
         {
             var tmp = context.Orders.Find(id);
-            tmp.Status = !tmp.Status;
+            tmp.IsProcessed = !tmp.IsProcessed;
             await context.SaveChangesAsync();
             return tmp;
         }
         public async Task<Order> ChangeOrderStatus(Guid id, bool status)
         {
             var tmp = context.Orders.Find(id);
-            tmp.Status = status;
+            tmp.IsProcessed = status;
             await context.SaveChangesAsync();
             return tmp;
         }

@@ -5,6 +5,7 @@ using Workshop.Data;
 using Workshop.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite
 builder.Services.AddTransient<IWorkshopRepository, WorkshopRepository>();
 builder.Services.AddTransient<IOrdersRepository, OrdersRepository>();
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+    {
+        var converter = new JsonStringEnumConverter(); //decode enum 'key strings' into enum values
+        options.JsonSerializerOptions.Converters.Add(converter);
+    });
 builder.Services.AddSpaStaticFiles(configuration => configuration.RootPath = "frontend/build");
 var app = builder.Build();
 

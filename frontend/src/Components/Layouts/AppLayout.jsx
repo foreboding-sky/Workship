@@ -12,7 +12,7 @@ const AppLayout = ({ children }) => {
     ]
 
     return (
-        <Layout>
+        <Layout style={{ height: "100vh" }}>
             <Sider>
                 <Menu
                     defaultSelectedKeys={['1']}
@@ -29,7 +29,7 @@ const AppLayout = ({ children }) => {
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>Workshop app</Footer>
             </Layout>
-        </Layout>
+        </Layout >
     );
 }
 
