@@ -20,7 +20,6 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=Workshop.db"));
 builder.Services.AddTransient<IWorkshopRepository, WorkshopRepository>();
-builder.Services.AddTransient<IOrdersRepository, OrdersRepository>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers().AddJsonOptions(options =>
     {
