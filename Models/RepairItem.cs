@@ -4,6 +4,6 @@ namespace Workshop.Models
     {
         public Guid Id { get; set; }
         public Repair? Repair { get; set; }
-        public Item? Item { get; set; }
+        public StockItem? Item { get; set; }
     }
 }

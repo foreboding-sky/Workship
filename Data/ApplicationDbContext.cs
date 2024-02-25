@@ -18,6 +18,7 @@ namespace Workshop.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<Repair> Repairs { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<StockItem> Stock { get; set; }
         public DbSet<RepairItem> RepairItems { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Device> Devices { get; set; }
@@ -44,7 +45,8 @@ namespace Workshop.Data
             mb.Entity<Repair>().HasMany(o => o.OrderedProducts).WithOne(o => o.Repair).OnDelete(DeleteBehavior.SetNull);
             mb.Entity<Item>().HasMany(o => o.RepairOrders).WithOne(o => o.Product).OnDelete(DeleteBehavior.SetNull);
             mb.Entity<Repair>().HasMany(o => o.Products).WithOne(o => o.Repair).OnDelete(DeleteBehavior.SetNull);
-            mb.Entity<Item>().HasMany(o => o.Repairs).WithOne(o => o.Item).OnDelete(DeleteBehavior.SetNull);
+            mb.Entity<StockItem>().HasMany(o => o.Repairs).WithOne(o => o.Item).OnDelete(DeleteBehavior.SetNull);
+            mb.Entity<StockItem>().HasOne(o => o.Item).WithOne(o => o.Stock).HasForeignKey<StockItem>(o => o.ItemId).OnDelete(DeleteBehavior.SetNull);
 
             //enum conversions
             mb.Entity<Item>()

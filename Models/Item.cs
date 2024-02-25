@@ -22,10 +22,8 @@ namespace Workshop.Models
         public Guid Id { get; set; }
         public ItemType? Type { get; set; }
         public Device? Device { get; set; }
-        public string? Name { get; set; }
-        public double? Price { get; set; }
-        public int? Quantity { get; set; }
-        public List<RepairItem>? Repairs { get; set; } //Many to Many relationship
+        public string? Title { get; set; }
         public List<Order>? RepairOrders { get; set; }
+        public StockItem? Stock { get; set; }
     }
 }
