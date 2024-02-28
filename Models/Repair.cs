@@ -13,7 +13,7 @@ namespace Workshop.Models
     public class Repair
     {
         public Guid Id { get; set; }
-        public string? User { get; set; } //user who created the repair
+        public string? User { get; set; } //user who created the repair entry
         public string? Specialist { get; set; } //whoever is doing the repair
         public Client? Client { get; set; }
         public Device? Device { get; set; }
