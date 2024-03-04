@@ -166,6 +166,11 @@ namespace Workshop.Data
             return await context.Stock.FindAsync(id);
         }
 
+        public async Task<StockItem> GetStockItemByItemId(Guid id)
+        {
+            return await context.Stock.FirstOrDefaultAsync(stock => stock.ItemId == id);
+        }
+
         public async Task<Client> UpdateClient(Client client)
         {
             var tmp = context.Clients.Find(client.Id);

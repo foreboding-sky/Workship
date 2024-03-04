@@ -2,6 +2,7 @@ namespace Workshop.Models
 {
     public class RepairReadDTO
     {
+        public Guid Id { get; set; }
         public string? User { get; set; } //user who created the repair entry
         public string? Specialist { get; set; } //whoever is doing the repair
         public ClientReadDTO? Client { get; set; }

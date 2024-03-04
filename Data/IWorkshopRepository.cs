@@ -36,6 +36,7 @@ namespace Workshop.Data
         public Task DeleteStockItem(Guid id);
         public Task<List<StockItem>> GetAllStockItems();
         public Task<StockItem> GetStockItemById(Guid id);
+        public Task<StockItem> GetStockItemByItemId(Guid id);
         public Task<StockItem> UpdateStockItem(StockItem stock);
         //device
         public Task<Device> CreateDevice(Device device);

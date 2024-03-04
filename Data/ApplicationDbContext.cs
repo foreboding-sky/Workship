@@ -32,12 +32,12 @@ namespace Workshop.Data
         {
             base.OnModelCreating(mb);
 
-            mb.Entity<Order>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
-            mb.Entity<Item>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
-            mb.Entity<Repair>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
-            mb.Entity<RepairItem>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
-            mb.Entity<Device>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
-            mb.Entity<Client>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
+            // mb.Entity<Order>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
+            // mb.Entity<Item>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
+            // mb.Entity<Repair>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
+            // mb.Entity<RepairItem>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
+            // mb.Entity<Device>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
+            // mb.Entity<Client>().Property(user => user.Id).HasDefaultValueSql("NEWID()");
 
             mb.Entity<Client>().HasMany(o => o.Repairs).WithOne(o => o.Client).OnDelete(DeleteBehavior.SetNull);
             mb.Entity<Device>().HasMany(o => o.Repairs).WithOne(o => o.Device).OnDelete(DeleteBehavior.SetNull);
