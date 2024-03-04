@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Workshop.Data;
 using AutoMapper;
 using Workshop.Models;
+using System.Net.WebSockets;
 
 namespace Workshop.Controllers
 {
@@ -75,18 +76,25 @@ namespace Workshop.Controllers
         }
 
         [HttpPost("/clients")]
-        public async Task<IActionResult> AddClient()
+        public async Task<IActionResult> AddClient([FromBody] ClientWriteDTO clientDTO)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            Client client = mapper.Map<Client>(clientDTO);
+            client.Id = Guid.NewGuid();
+            await repository.CreateClient(client);
+            return Ok(client);
         }
 
         [HttpPost("/repairs")]
-        public async Task<IActionResult> AddRepair()
+        public async Task<IActionResult> AddRepair([FromBody] RepairWriteDTO repairDTO)
         {
-            // if (!ModelState.IsValid)
-            // {
-            //     return BadRequest();
-            // }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             // Order tmp = mapper.Map<Order>(orderDto);
             // tmp.Id = Guid.NewGuid();
             // await repository.CreateOrder(tmp);
@@ -94,21 +102,98 @@ namespace Workshop.Controllers
         }
 
         [HttpPost("/stock")]
-        public async Task<IActionResult> AddStockItem()
+        public async Task<IActionResult> AddStockItem([FromBody] StockItemWriteDTO stockDTO)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            StockItem stock = mapper.Map<StockItem>(stockDTO);
+
+            var device = repository.GetAllDevices().Result
+                .Find(device => device.Brand == stock.Item.Device.Brand
+                            && device.Model == stock.Item.Device.Model);
+            if (device == null)
+            {
+                device = stock.Item.Device;
+                device.Id = Guid.NewGuid();
+                await repository.CreateDevice(device);
+            }
+
+            var item = repository.GetAllItems().Result
+                .Find(item => item.Title == stock.Item.Title
+                            && item.Device.Brand == device.Brand
+                            && item.Device.Model == device.Model);
+
+            if (item == null)
+            {
+                item = stock.Item;
+                item.Id = Guid.NewGuid();
+                await repository.CreateItem(item);
+            }
+
+            stock.Id = Guid.NewGuid();
+            stock.Item = item;
+            stock.Item.Device = device;
+            await repository.CreateStockItem(stock);
+            return Ok(stock);
         }
 
         [HttpPost("/orders")]
-        public async Task<IActionResult> AddOrder()
+        public async Task<IActionResult> AddOrder([FromBody] OrderWriteDTO orderDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            Order order = mapper.Map<Order>(orderDTO);
+
+            var device = repository.GetAllDevices().Result
+                .Find(device => device.Brand == order.Product.Device.Brand
+                            && device.Model == order.Product.Device.Model);
+            if (device == null)
+            {
+                device = order.Product.Device;
+                device.Id = Guid.NewGuid();
+                await repository.CreateDevice(device);
+            }
+
+            var item = repository.GetAllItems().Result
+                .Find(item => item.Title == order.Product.Title
+                            && item.Device.Brand == device.Brand
+                            && item.Device.Model == device.Model);
+
+            if (item == null)
+            {
+                item = order.Product;
+                item.Id = Guid.NewGuid();
+                await repository.CreateItem(item);
+            }
+
+            order.Id = Guid.NewGuid();
+            order.Product = item;
+            order.Product.Device = device;
+            order.DateOrdered = DateTime.Now;
+            order.IsProcessed = false;
+            await repository.CreateOrder(order);
             return Ok();
         }
 
         [HttpPost("/clients/{id}")]
-        public async Task<IActionResult> UpdateClient(Guid id)
+        public async Task<IActionResult> UpdateClient([FromBody] ClientWriteDTO clientDTO, Guid id)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            Client client = mapper.Map<Client>(clientDTO);
+            var clientDB = await repository.GetClientById(id);
+            clientDB.FullName = client.FullName;
+            clientDB.Comment = client.Comment;
+            clientDB.Phone = client.Phone;
+            await repository.UpdateClient(clientDB);
+            return Ok(clientDB);
         }
 
         [HttpPost("/repairs/{id}")]
