@@ -59,8 +59,7 @@ namespace Workshop.Controllers
                 return BadRequest();
             }
             Client client = mapper.Map<Client>(clientDTO);
-            var clientDB = repository.GetAllClients().Result.Find(res => res.FullName == client.FullName
-                                                                        && res.Phone == client.Phone);
+            var clientDB = await repository.GetClientByModel(client);
             if (clientDB == null)
             {
                 client.Id = Guid.NewGuid();
@@ -69,7 +68,7 @@ namespace Workshop.Controllers
                 return Ok(clientReadDTO);
             }
             ClientReadDTO clientDBReadDTO = mapper.Map<ClientReadDTO>(clientDB);
-            return Ok(client);
+            return Ok(clientDBReadDTO);
         }
 
         [HttpPost("repairs")]
@@ -80,7 +79,34 @@ namespace Workshop.Controllers
             {
                 return BadRequest();
             }
-            return Ok();
+            Repair repair = mapper.Map<Repair>(repairDTO);
+
+            var client = await repository.GetClientByModel(repair.Client);
+            if (client == null)
+            {
+                client = repair.Client;
+                client.Id = Guid.NewGuid();
+                await repository.CreateClient(client);
+            }
+
+            var device = await repository.GetDeviceByModel(repair.Device);
+            if (device == null)
+            {
+                device = repair.Device;
+                device.Id = Guid.NewGuid();
+                await repository.CreateDevice(device);
+            }
+
+            //TODO check for repair items
+
+            //TODO check for orders
+
+            repair.Id = Guid.NewGuid();
+            repair.Device = device;
+            repair.Client = client;
+            await repository.CreateRepair(repair);
+            RepairReadDTO repairReadDTO = mapper.Map<RepairReadDTO>(repair);
+            return Ok(repairReadDTO);
         }
 
         [HttpPost("stock")]
@@ -93,9 +119,8 @@ namespace Workshop.Controllers
 
             StockItem stock = mapper.Map<StockItem>(stockDTO);
 
-            var device = repository.GetAllDevices().Result
-                .Find(device => device.Brand == stock.Item.Device.Brand
-                            && device.Model == stock.Item.Device.Model);
+            var device = await repository.GetDeviceByModel(stock.Item.Device);
+
             if (device == null)
             {
                 device = stock.Item.Device;
@@ -103,10 +128,7 @@ namespace Workshop.Controllers
                 await repository.CreateDevice(device);
             }
 
-            var item = repository.GetAllItems().Result
-                .Find(item => item.Title == stock.Item.Title
-                            && item.Device.Brand == device.Brand
-                            && item.Device.Model == device.Model);
+            var item = await repository.GetItemByModel(stock.Item);
 
             if (item == null)
             {
@@ -179,12 +201,9 @@ namespace Workshop.Controllers
                 return BadRequest();
             }
             Client client = mapper.Map<Client>(clientDTO);
-            var clientDB = await repository.GetClientById(id);
-            clientDB.FullName = client.FullName;
-            clientDB.Comment = client.Comment;
-            clientDB.Phone = client.Phone;
-            await repository.UpdateClient(clientDB);
-            return Ok(clientDB);
+            await repository.UpdateClient(client);
+            ClientReadDTO clientReadDTO = mapper.Map<ClientReadDTO>(client);
+            return Ok(clientReadDTO);
         }
 
         [HttpPost("repairs/{id}")]

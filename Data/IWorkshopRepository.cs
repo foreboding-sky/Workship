@@ -13,6 +13,7 @@ namespace Workshop.Data
         public Task DeleteClient(Guid id);
         public Task<List<Client>> GetAllClients();
         public Task<Client> GetClientById(Guid id);
+        public Task<Client> GetClientByModel(Client client);
         public Task<Client> UpdateClient(Client client);
         //repair
         public Task<Repair> CreateRepair(Repair repair);
@@ -31,6 +32,7 @@ namespace Workshop.Data
         public Task DeleteItem(Guid id);
         public Task<List<Item>> GetAllItems();
         public Task<Item> GetItemById(Guid id);
+        public Task<Item> GetItemByModel(Item item);
         //stock item
         public Task<StockItem> CreateStockItem(StockItem stock);
         public Task DeleteStockItem(Guid id);
@@ -43,5 +45,6 @@ namespace Workshop.Data
         public Task DeleteDevice(Guid id);
         public Task<List<Device>> GetAllDevices();
         public Task<Device> GetDeviceById(Guid id);
+        public Task<Device> GetDeviceByModel(Device device);
     }
 }

@@ -3,6 +3,7 @@ namespace Workshop.Models
 {
     public class OrderWriteDTO
     {
+        public Guid Id { get; set; }
         public string? Source { get; set; }
         public ItemWriteDTO? Product { get; set; }
         public string? Comment { get; set; }

@@ -141,14 +141,40 @@ namespace Workshop.Data
             return await context.Clients.FindAsync(id);
         }
 
+        public async Task<Client> GetClientByModel(Client client)
+        {
+            var result = GetAllClients().Result
+                .Find(res => res.FullName == client.FullName 
+                            && res.Phone == client.Phone
+                            && res.Comment == client.Comment);
+            return result;
+        }
+
         public async Task<Device> GetDeviceById(Guid id)
         {
             return await context.Devices.FindAsync(id);
         }
 
+        public async Task<Device> GetDeviceByModel(Device device)
+        {
+            var result = GetAllDevices().Result
+                .Find(res => res.Brand == device.Brand
+                            && res.Model == device.Model);
+            return result;
+        }
+
         public async Task<Item> GetItemById(Guid id)
         {
             return await context.Items.FindAsync(id);
+        }
+
+        public async Task<Item> GetItemByModel(Item item)
+        {
+            var result = GetAllItems().Result
+                .Find(res => res.Title == item.Title
+                            && res.Device.Brand == item.Device.Brand
+                            && res.Device.Model == item.Device.Model);
+            return result;
         }
 
         public async Task<Order> GetOrderById(Guid id)
@@ -173,26 +199,46 @@ namespace Workshop.Data
 
         public async Task<Client> UpdateClient(Client client)
         {
-            var tmp = context.Clients.Find(client.Id);
-            tmp = client;
+            var clientDB = await GetClientById(client.Id);
+            if(clientDB == null)
+                clientDB = await GetClientByModel(client);
+            if(clientDB == null)
+                return clientDB;
+
+            clientDB.FullName = client.FullName;
+            clientDB.Comment = client.Comment;
+            clientDB.Phone = client.Phone;
             await context.SaveChangesAsync();
-            return tmp;
+            return clientDB;
         }
 
         public async Task<Device> UpdateDevice(Device device)
         {
-            var tmp = context.Devices.Find(device.Id);
-            tmp = device;
+            var deviceDB = await GetDeviceById(device.Id);
+            if(deviceDB == null)
+                deviceDB = await GetDeviceByModel(device);
+            if(deviceDB == null)
+                return deviceDB;
+
+            deviceDB.Type = device.Type;
+            deviceDB.Model = device.Model;
+            deviceDB.Brand = device.Brand;
             await context.SaveChangesAsync();
-            return tmp;
+            return deviceDB;
         }
 
         public async Task<Item> UpdateItem(Item item)
         {
-            var tmp = context.Items.Find(item.Id);
-            tmp = item;
+            var itemDB = await GetItemById(item.Id);
+            if(itemDB == null)
+                itemDB = await GetItemByModel(item);
+            if(itemDB == null)
+                return itemDB;
+            itemDB.Title = item.Title;
+            itemDB.Type = item.Type;
+            itemDB.Device = item.Device;
             await context.SaveChangesAsync();
-            return tmp;
+            return itemDB;
         }
 
         public async Task<Order> UpdateOrder(Order order)
