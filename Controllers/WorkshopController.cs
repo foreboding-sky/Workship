@@ -81,6 +81,8 @@ namespace Workshop.Controllers
             }
             Repair repair = mapper.Map<Repair>(repairDTO);
 
+            repair.Id = Guid.NewGuid(); //no need to check if repair entry already exist, always create new one
+
             var client = await repository.GetClientByModel(repair.Client);
             if (client == null)
             {
@@ -98,10 +100,30 @@ namespace Workshop.Controllers
             }
 
             //TODO check for repair items
+            List<RepairItem> repairItemsDB = new List<RepairItem>();
+            foreach (var product in repair.Products)
+            {
+                //var itemDB = await repository.GetStockItemByItemId(product.Item.Id);
+                var itemDB = await repository.GetStockItemByModel(product.Item);
+                if(itemDB == null)
+                    continue;
+                var repairItem = await repository.CreateRepairItem(new RepairItem{Item = itemDB, Repair = repair});
+                repairItemsDB.Add(repairItem);
+            }
 
             //TODO check for orders
+            List<Order> ordersDB = new List<Order>();
+            foreach (var order in repair.OrderedProducts)
+            {
+                order.Id = Guid.NewGuid();
+                order.Repair = repair;
+                //order.Product = await repository.GetItemById(order.Id);
+                order.Product = await repository.GetItemByModel(order.Product);
+                ordersDB.Add(order);
+            }
 
-            repair.Id = Guid.NewGuid();
+            repair.Products = repairItemsDB;
+            repair.OrderedProducts = ordersDB;
             repair.Device = device;
             repair.Client = client;
             await repository.CreateRepair(repair);

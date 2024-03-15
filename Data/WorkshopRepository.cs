@@ -51,6 +51,13 @@ namespace Workshop.Data
             return repair;
         }
 
+        public async Task<RepairItem> CreateRepairItem(RepairItem repairItem)
+        {
+            context.RepairItems.Add(repairItem);
+            await context.SaveChangesAsync();
+            return repairItem;
+        }
+
         public async Task<StockItem> CreateStockItem(StockItem stock)
         {
             context.Stock.Add(stock);
@@ -182,6 +189,12 @@ namespace Workshop.Data
             return await context.Orders.FindAsync(id);
         }
 
+        public async Task<Order> GetOrderByModel(Order order)
+        {
+            //TODO if needed
+            throw new NotImplementedException();
+        }
+
         public async Task<Repair> GetRepairById(Guid id)
         {
             return await context.Repairs.FindAsync(id);
@@ -195,6 +208,16 @@ namespace Workshop.Data
         public async Task<StockItem> GetStockItemByItemId(Guid id)
         {
             return await context.Stock.FirstOrDefaultAsync(stock => stock.ItemId == id);
+        }
+
+        public async Task<StockItem> GetStockItemByModel(StockItem stock)
+        {
+            //var item = await GetItemById(stock.Item.Id);
+            var item = await GetItemByModel(stock.Item);
+            var result = GetAllStockItems().Result
+                .Find(res => res.Price == stock.Price
+                            && res.Item == item);
+            return result;
         }
 
         public async Task<Client> UpdateClient(Client client)
