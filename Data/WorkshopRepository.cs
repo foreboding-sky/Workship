@@ -125,21 +125,25 @@ namespace Workshop.Data
 
         public async Task<List<Item>> GetAllItems()
         {
+            //TODO includes
             return await context.Items.ToListAsync();
         }
 
         public async Task<List<Order>> GetAllOrders()
         {
+            //TODO includes
             return await context.Orders.ToListAsync();
         }
 
         public async Task<List<Repair>> GetAllRepairs()
         {
+            //TODO includes
             return await context.Repairs.ToListAsync();
         }
 
         public async Task<List<StockItem>> GetAllStockItems()
         {
+            //TODO includes
             return await context.Stock.ToListAsync();
         }
 
@@ -151,7 +155,7 @@ namespace Workshop.Data
         public async Task<Client> GetClientByModel(Client client)
         {
             var result = GetAllClients().Result
-                .Find(res => res.FullName == client.FullName 
+                .Find(res => res.FullName == client.FullName
                             && res.Phone == client.Phone
                             && res.Comment == client.Comment);
             return result;
@@ -186,32 +190,38 @@ namespace Workshop.Data
 
         public async Task<Order> GetOrderById(Guid id)
         {
+            //TODO includes
             return await context.Orders.FindAsync(id);
         }
 
         public async Task<Order> GetOrderByModel(Order order)
         {
             //TODO if needed
+            //TODO includes
             throw new NotImplementedException();
         }
 
         public async Task<Repair> GetRepairById(Guid id)
         {
+            //TODO includes
             return await context.Repairs.FindAsync(id);
         }
 
         public async Task<StockItem> GetStockItemById(Guid id)
         {
+            //TODO includes
             return await context.Stock.FindAsync(id);
         }
 
         public async Task<StockItem> GetStockItemByItemId(Guid id)
         {
+            //TODO includes
             return await context.Stock.FirstOrDefaultAsync(stock => stock.ItemId == id);
         }
 
         public async Task<StockItem> GetStockItemByModel(StockItem stock)
         {
+            //TODO includes
             //var item = await GetItemById(stock.Item.Id);
             var item = await GetItemByModel(stock.Item);
             var result = GetAllStockItems().Result
@@ -223,9 +233,9 @@ namespace Workshop.Data
         public async Task<Client> UpdateClient(Client client)
         {
             var clientDB = await GetClientById(client.Id);
-            if(clientDB == null)
+            if (clientDB == null)
                 clientDB = await GetClientByModel(client);
-            if(clientDB == null)
+            if (clientDB == null)
                 return clientDB;
 
             clientDB.FullName = client.FullName;
@@ -238,9 +248,9 @@ namespace Workshop.Data
         public async Task<Device> UpdateDevice(Device device)
         {
             var deviceDB = await GetDeviceById(device.Id);
-            if(deviceDB == null)
+            if (deviceDB == null)
                 deviceDB = await GetDeviceByModel(device);
-            if(deviceDB == null)
+            if (deviceDB == null)
                 return deviceDB;
 
             deviceDB.Type = device.Type;
@@ -253,9 +263,9 @@ namespace Workshop.Data
         public async Task<Item> UpdateItem(Item item)
         {
             var itemDB = await GetItemById(item.Id);
-            if(itemDB == null)
+            if (itemDB == null)
                 itemDB = await GetItemByModel(item);
-            if(itemDB == null)
+            if (itemDB == null)
                 return itemDB;
             itemDB.Title = item.Title;
             itemDB.Type = item.Type;

@@ -105,9 +105,9 @@ namespace Workshop.Controllers
             {
                 //var itemDB = await repository.GetStockItemByItemId(product.Item.Id);
                 var itemDB = await repository.GetStockItemByModel(product.Item);
-                if(itemDB == null)
+                if (itemDB == null)
                     continue;
-                var repairItem = await repository.CreateRepairItem(new RepairItem{Item = itemDB, Repair = repair});
+                var repairItem = await repository.CreateRepairItem(new RepairItem { Item = itemDB });
                 repairItemsDB.Add(repairItem);
             }
 
@@ -229,9 +229,46 @@ namespace Workshop.Controllers
         }
 
         [HttpPost("repairs/{id}")]
-        public async Task<IActionResult> UpdateRepair(Guid id)
+        public async Task<IActionResult> UpdateRepair([FromBody] RepairWriteDTO repairDTO)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var repair = mapper.Map<Repair>(repairDTO);
+            var repairDB = await repository.GetRepairById(repair.Id);
+
+            repairDB.Client = repair.Client;
+            repairDB.Device = repair.Device;
+            repairDB.Products = repair.Products;
+
+            List<RepairItem> repairItemsDB = new List<RepairItem>();
+            foreach (var product in repair.Products)
+            {
+                //var itemDB = await repository.GetStockItemByItemId(product.Item.Id);
+                var itemDB = await repository.GetStockItemByModel(product.Item);
+                if (itemDB == null)
+                    continue;
+                var repairItem = await repository.CreateRepairItem(new RepairItem { Item = itemDB });
+                repairItemsDB.Add(repairItem);
+            }
+
+            //TODO check for orders
+            List<Order> ordersDB = new List<Order>();
+            foreach (var order in repair.OrderedProducts)
+            {
+                order.Id = Guid.NewGuid();
+                order.Repair = repair;
+                //order.Product = await repository.GetItemById(order.Id);
+                order.Product = await repository.GetItemByModel(order.Product);
+                ordersDB.Add(order);
+            }
+
+            repair.Products = repairItemsDB;
+            repair.OrderedProducts = ordersDB;
+            await repository.CreateRepair(repair);
+            RepairReadDTO repairReadDTO = mapper.Map<RepairReadDTO>(repair);
+            return Ok(repairReadDTO);
         }
 
         [HttpPost("stock/{id}")]
