@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,26 +126,25 @@ namespace Workshop.Data
 
         public async Task<List<Item>> GetAllItems()
         {
-            //TODO includes
-            return await context.Items.ToListAsync();
+            return await context.Items.Include(c => c.Device).ToListAsync();
         }
 
         public async Task<List<Order>> GetAllOrders()
         {
-            //TODO includes
-            return await context.Orders.ToListAsync();
+            return await context.Orders.Include(c => c.Product).ThenInclude(c => c.Device).ToListAsync();
         }
 
         public async Task<List<Repair>> GetAllRepairs()
         {
-            //TODO includes
-            return await context.Repairs.ToListAsync();
+            return await context.Repairs.Include(c => c.Client)
+                                        .Include(c => c.Device)
+                                        .Include(c => c.Products).ThenInclude(c => c.Item).ThenInclude(c => c.Item).ThenInclude(c => c.Device)
+                                        .Include(c => c.OrderedProducts).ThenInclude(c => c.Product).ThenInclude(c => c.Device).ToListAsync();
         }
 
         public async Task<List<StockItem>> GetAllStockItems()
         {
-            //TODO includes
-            return await context.Stock.ToListAsync();
+            return await context.Stock.Include(c => c.Item).ThenInclude(c => c.Device).ToListAsync();
         }
 
         public async Task<Client> GetClientById(Guid id)
@@ -190,38 +190,32 @@ namespace Workshop.Data
 
         public async Task<Order> GetOrderById(Guid id)
         {
-            //TODO includes
-            return await context.Orders.FindAsync(id);
+            return GetAllOrders().Result.Find(order => order.Id == id);
         }
 
         public async Task<Order> GetOrderByModel(Order order)
         {
             //TODO if needed
-            //TODO includes
             throw new NotImplementedException();
         }
 
         public async Task<Repair> GetRepairById(Guid id)
         {
-            //TODO includes
-            return await context.Repairs.FindAsync(id);
+            return GetAllRepairs().Result.Find(repair => repair.Id == id);
         }
 
         public async Task<StockItem> GetStockItemById(Guid id)
         {
-            //TODO includes
-            return await context.Stock.FindAsync(id);
+            return GetAllStockItems().Result.Find(stock => stock.Id == id);
         }
 
         public async Task<StockItem> GetStockItemByItemId(Guid id)
         {
-            //TODO includes
-            return await context.Stock.FirstOrDefaultAsync(stock => stock.ItemId == id);
+            return GetAllStockItems().Result.Find(stock => stock.Item.Id == id);
         }
 
         public async Task<StockItem> GetStockItemByModel(StockItem stock)
         {
-            //TODO includes
             //var item = await GetItemById(stock.Item.Id);
             var item = await GetItemByModel(stock.Item);
             var result = GetAllStockItems().Result
@@ -236,7 +230,7 @@ namespace Workshop.Data
             if (clientDB == null)
                 clientDB = await GetClientByModel(client);
             if (clientDB == null)
-                return clientDB;
+                return null;
 
             clientDB.FullName = client.FullName;
             clientDB.Comment = client.Comment;
@@ -251,7 +245,7 @@ namespace Workshop.Data
             if (deviceDB == null)
                 deviceDB = await GetDeviceByModel(device);
             if (deviceDB == null)
-                return deviceDB;
+                return null;
 
             deviceDB.Type = device.Type;
             deviceDB.Model = device.Model;
@@ -266,16 +260,25 @@ namespace Workshop.Data
             if (itemDB == null)
                 itemDB = await GetItemByModel(item);
             if (itemDB == null)
-                return itemDB;
+                return null;
             itemDB.Title = item.Title;
             itemDB.Type = item.Type;
-            itemDB.Device = item.Device;
+            if (item.Device != null)
+            {
+                if (itemDB.Device == null)
+                    itemDB.Device = new Device();
+
+                itemDB.Device.Type = item.Device.Type;
+                itemDB.Device.Brand = item.Device.Brand;
+                itemDB.Device.Model = item.Device.Model;
+            }
             await context.SaveChangesAsync();
             return itemDB;
         }
 
         public async Task<Order> UpdateOrder(Order order)
         {
+            //TODO
             var tmp = context.Orders.Find(order.Id);
             tmp = order;
             await context.SaveChangesAsync();
@@ -284,18 +287,77 @@ namespace Workshop.Data
 
         public async Task<Repair> UpdateRepair(Repair repair)
         {
-            var tmp = context.Repairs.Find(repair.Id);
-            tmp = repair;
+            var repairDB = await GetRepairById(repair.Id);
+            if (repairDB == null)
+                return null;
+
+            var existingItems = repairDB.Products.ToList();
+            var selectedItems = repair.Products.ToList();
+            var itemsToAdd = selectedItems.Except(existingItems).ToList();
+            var itemsToRemove = existingItems.Except(selectedItems).ToList();
+
+            foreach (var item in itemsToRemove)
+                repairDB.Products.Remove(item);
+
+            foreach (var item in itemsToAdd)
+                repairDB.Products.Add(new RepairItem() { Item = item.Item });
+
+            var existingOrders = repairDB.OrderedProducts.ToList();
+            var selectedOrders = repair.OrderedProducts.ToList();
+            var ordersToAdd = selectedOrders.Except(existingOrders).ToList();
+            var ordersToRemove = existingOrders.Except(selectedOrders).ToList();
+
+            foreach (var item in ordersToRemove)
+                repairDB.OrderedProducts.Remove(item);
+
+            foreach (var item in ordersToAdd)
+                repairDB.OrderedProducts.Add(item); //TODO
+
+            repairDB.Client = repair.Client;
+            repairDB.Device = repair.Device;
+            repairDB.User = repair.User;
+            repairDB.Client = repair.Client;
+            repairDB.Specialist = repair.Specialist;
+            repairDB.Complaint = repair.Complaint;
+            repairDB.Comment = repair.Comment;
+            repairDB.Discount = repair.Discount;
+            repairDB.TotalPrice = repair.TotalPrice;
+            repairDB.Status = repair.Status;
             await context.SaveChangesAsync();
-            return tmp;
+            return repairDB;
         }
 
         public async Task<StockItem> UpdateStockItem(StockItem stock)
         {
-            var tmp = context.Stock.Find(stock.Id);
-            tmp = stock;
+            var stockDB = await GetStockItemById(stock.Id);
+            if (stockDB == null)
+                stockDB = await GetStockItemByModel(stock);
+            if (stockDB == null)
+                return null;
+
+            if (stock.Item == null)
+                stockDB.Item = null;
+            if (stock.Item != null)
+            {
+                if (stockDB.Item == null)
+                    stockDB.Item = new Item() { Id = Guid.NewGuid() };
+                stockDB.Item.Title = stock.Item.Title;
+                stockDB.Item.Type = stock.Item.Type;
+                if (stock.Item.Device != null)
+                {
+                    if (stockDB.Item.Device == null)
+                        stockDB.Item.Device = new Device();
+
+                    stockDB.Item.Device.Type = stock.Item.Device.Type;
+                    stockDB.Item.Device.Brand = stock.Item.Device.Brand;
+                    stockDB.Item.Device.Model = stock.Item.Device.Model;
+                }
+            }
+
+            stockDB.Price = stock.Price;
+            stockDB.Quantity = stock.Quantity;
             await context.SaveChangesAsync();
-            return tmp;
+            return stockDB;
         }
     }
 }
