@@ -59,7 +59,8 @@ namespace Workshop.Controllers
                 return BadRequest();
             }
             Client client = mapper.Map<Client>(clientDTO);
-            var clientDB = await repository.GetClientByModel(client);
+            //var clientDB = await repository.GetClientByModel(client);
+            var clientDB = await repository.GetClientById(client.Id);
             if (clientDB == null)
             {
                 client.Id = Guid.NewGuid();
@@ -83,7 +84,8 @@ namespace Workshop.Controllers
 
             repair.Id = Guid.NewGuid(); //no need to check if repair entry already exist, always create new one
 
-            var client = await repository.GetClientByModel(repair.Client);
+            //var client = await repository.GetClientByModel(repair.Client);
+            var client = await repository.GetClientById(repair.Client.Id);
             if (client == null)
             {
                 client = repair.Client;
@@ -91,7 +93,8 @@ namespace Workshop.Controllers
                 await repository.CreateClient(client);
             }
 
-            var device = await repository.GetDeviceByModel(repair.Device);
+            //var device = await repository.GetDeviceByModel(repair.Device);
+            var device = await repository.GetDeviceById(repair.Device.Id);
             if (device == null)
             {
                 device = repair.Device;
@@ -103,8 +106,8 @@ namespace Workshop.Controllers
             List<RepairItem> repairItemsDB = new List<RepairItem>();
             foreach (var product in repair.Products)
             {
-                //var itemDB = await repository.GetStockItemByItemId(product.Item.Id);
-                var itemDB = await repository.GetStockItemByModel(product.Item);
+                //var itemDB = await repository.GetStockItemByModel(product.Item);
+                var itemDB = await repository.GetStockItemByItemId(product.Item.Id);
                 if (itemDB == null)
                     continue;
                 var repairItem = await repository.CreateRepairItem(new RepairItem { Item = itemDB });
@@ -117,8 +120,8 @@ namespace Workshop.Controllers
             {
                 order.Id = Guid.NewGuid();
                 order.Repair = repair;
-                //order.Product = await repository.GetItemById(order.Id);
-                order.Product = await repository.GetItemByModel(order.Product);
+                //order.Product = await repository.GetItemByModel(order.Product);
+                order.Product = await repository.GetItemById(order.Id);
                 ordersDB.Add(order);
             }
 
@@ -141,8 +144,8 @@ namespace Workshop.Controllers
 
             StockItem stock = mapper.Map<StockItem>(stockDTO);
 
-            var device = await repository.GetDeviceByModel(stock.Item.Device);
-
+            //var device = await repository.GetDeviceByModel(stock.Item.Device);
+            var device = await repository.GetDeviceById(stock.Item.Device.Id);
             if (device == null)
             {
                 device = stock.Item.Device;
@@ -150,8 +153,8 @@ namespace Workshop.Controllers
                 await repository.CreateDevice(device);
             }
 
-            var item = await repository.GetItemByModel(stock.Item);
-
+            //var item = await repository.GetItemByModel(stock.Item);
+            var item = await repository.GetItemById(stock.Item.Id);
             if (item == null)
             {
                 item = stock.Item;
@@ -170,6 +173,10 @@ namespace Workshop.Controllers
                 StockItemReadDTO stockReadDTO = mapper.Map<StockItemReadDTO>(stock);
                 return Ok(stockReadDTO);
             }
+            // stockDB.ItemId = item.Id;
+            // stockDB.Item = item;
+            // stockDB.Item.Device = device;
+            // await repository.UpdateStockItem(stockDB);
             StockItemReadDTO stockDBReadDTO = mapper.Map<StockItemReadDTO>(stockDB);
             return Ok(stockDBReadDTO);
         }
@@ -242,15 +249,16 @@ namespace Workshop.Controllers
         }
 
         [HttpPost("stock/{id}")]
-        public async Task<IActionResult> UpdateStockItem(Guid id)
+        public async Task<IActionResult> UpdateStockItem([FromBody] StockItemWriteDTO stockDTO, Guid id)
         {
-            return Ok();
-        }
-
-        [HttpPost("orders/{id}")]
-        public async Task<IActionResult> UpdateOrder(Guid id)
-        {
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var stock = mapper.Map<StockItem>(stockDTO);
+            var updatedStock = await repository.UpdateStockItem(stock);
+            StockItemReadDTO stockReadDTO = mapper.Map<StockItemReadDTO>(updatedStock);
+            return Ok(stockReadDTO);
         }
 
         [HttpDelete("clients/{id}")]

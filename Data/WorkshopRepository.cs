@@ -176,16 +176,15 @@ namespace Workshop.Data
 
         public async Task<Item> GetItemById(Guid id)
         {
-            return await context.Items.FindAsync(id);
+            return GetAllItems().Result.Find(res => res.Id == id);
         }
 
         public async Task<Item> GetItemByModel(Item item)
         {
-            var result = GetAllItems().Result
-                .Find(res => res.Title == item.Title
+            return  GetAllItems().Result
+                            .Find(res => res.Title == item.Title
                             && res.Device.Brand == item.Device.Brand
                             && res.Device.Model == item.Device.Model);
-            return result;
         }
 
         public async Task<Order> GetOrderById(Guid id)
@@ -218,10 +217,9 @@ namespace Workshop.Data
         {
             //var item = await GetItemById(stock.Item.Id);
             var item = await GetItemByModel(stock.Item);
-            var result = GetAllStockItems().Result
-                .Find(res => res.Price == stock.Price
+            return GetAllStockItems().Result
+                            .Find(res => res.Price == stock.Price
                             && res.Item == item);
-            return result;
         }
 
         public async Task<Client> UpdateClient(Client client)
