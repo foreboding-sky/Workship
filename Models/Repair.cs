@@ -20,6 +20,7 @@ namespace Workshop.Models
         public string? Complaint { get; set; }
         public List<RepairItem>? Products { get; set; } //Many to Many relationship
         public List<Order>? OrderedProducts { get; set; }
+        //public List<RepairService>? RepairServices { get; set; }
         public string? Comment { get; set; }
         public double? Discount { get; set; }
         public double? TotalPrice { get; set; }

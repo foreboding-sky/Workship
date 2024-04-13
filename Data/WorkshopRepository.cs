@@ -181,7 +181,7 @@ namespace Workshop.Data
 
         public async Task<Item> GetItemByModel(Item item)
         {
-            return  GetAllItems().Result
+            return GetAllItems().Result
                             .Find(res => res.Title == item.Title
                             && res.Device.Brand == item.Device.Brand
                             && res.Device.Model == item.Device.Model);
@@ -311,10 +311,23 @@ namespace Workshop.Data
             foreach (var item in ordersToAdd)
                 repairDB.OrderedProducts.Add(item); //TODO
 
-            repairDB.Client = repair.Client;
-            repairDB.Device = repair.Device;
+            if (repairDB.Client.Id != repair.Client.Id)
+                repairDB.Client = repair.Client;
+            else
+            {
+                repairDB.Client.FullName = repair.Client.FullName;
+                repairDB.Client.Phone = repair.Client.Phone;
+                repairDB.Client.Comment = repair.Client.Comment;
+            }
+            if (repairDB.Device.Id != repair.Device.Id)
+                repairDB.Device = repair.Device;
+            else
+            {
+                repairDB.Device.Type = repair.Device.Type;
+                repairDB.Device.Model = repair.Device.Model;
+                repairDB.Device.Brand = repair.Device.Brand;
+            }
             repairDB.User = repair.User;
-            repairDB.Client = repair.Client;
             repairDB.Specialist = repair.Specialist;
             repairDB.Complaint = repair.Complaint;
             repairDB.Comment = repair.Comment;

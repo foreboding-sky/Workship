@@ -13,6 +13,9 @@ namespace Workshop.Profiles
             CreateMap<DeviceWriteDTO, Device>();
             CreateMap<Device, DeviceReadDTO>();
 
+            CreateMap<ServiceWriteDTO, Service>();
+            CreateMap<Service, ServiceReadDTO>();
+
             CreateMap<ItemWriteDTO, Item>()
                 .ForMember(dst => dst.Device, src => src.MapFrom(src => src.Device));
             CreateMap<Item, ItemReadDTO>()
@@ -32,13 +35,15 @@ namespace Workshop.Profiles
                 .ForMember(dst => dst.Client, src => src.MapFrom(src => src.Client))
                 .ForMember(dst => dst.Products, src => src.MapFrom(src => src.Products))
                 .ForMember(dst => dst.OrderedProducts, src => src.MapFrom(src => src.OrderedProducts))
+                //.ForMember(dst => dst.RepairServices, src => src.MapFrom(src => src.RepairServices))
                 .ForMember(dst => dst.Device, src => src.MapFrom(src => src.Device));
             CreateMap<Repair, RepairReadDTO>()
                 .ForMember(dst => dst.Client, src => src.MapFrom(src => src.Client))
                 .ForMember(dst => dst.Products, src => src.MapFrom(src => src.Products.Select(x => x.Item).ToList()))
                 .ForMember(dst => dst.OrderedProducts, src => src.MapFrom(src => src.OrderedProducts))
+                //.ForMember(dst => dst.RepairServices, src => src.MapFrom(src => src.RepairServices))
                 .ForMember(dst => dst.Device, src => src.MapFrom(src => src.Device));
-            
+
             CreateMap<StockItemWriteDTO, RepairItem>()
                 .ForMember(dst => dst.Item, src => src.MapFrom(src => src));
         }

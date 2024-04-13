@@ -6,28 +6,15 @@ import axios from 'axios';
 const { Column, ColumnGroup } = Table;
 
 const RepairsPage = () => {
-    useEffect(() => {
-        console.log("orders page axios get all");
-        axios.get("/api/Workshop").then(res => {
-            setArray(res.data);
-            console.log(res.data);
-        });
-    }, []);
 
     const [array, setArray] = useState([]);
 
-    const ChangeStatus = (record) => {
-        axios.post("/api/Workshop/" + record.id).then(res => {
-            let newArray = array.filter(order => { return order.id !== record.id; });
-            setArray(newArray);
-        })
+    const EditRepair = (record) => {
+        //edit repair here and post it to api
     };
 
     const DeleteRepair = (record) => {
-        axios.delete("/api/Workshop/" + record.id).then(res => {
-            let newArray = array.filter(order => { return order.id !== record.id; });
-            setArray(newArray);
-        })
+        //delete repair record here
     };
 
     return (
@@ -38,21 +25,20 @@ const RepairsPage = () => {
                 </Button>
             </div>
             <Table dataSource={array}>
-                <Column title="User" dataIndex="user" key="user" />
-                <Column title="Market" dataIndex="market" key="market" />
-                <Column title="Client" dataIndex="client" key="client" />
+                <Column title="Specialist" dataIndex="specialist" key="specialist" />
                 <Column title="Device" dataIndex="device" key="device" />
-                <Column title="Product" dataIndex="product" key="product" />
-                <Column title="Comment" dataIndex="comment" key="comment" />
+                <Column title="Client" dataIndex="client" key="client" />
+                <Column title="Complaint" dataIndex="complaint" key="complaint" />
+                <Column title="Status" dataIndex="status" key="status" />
                 <Column title="Date" dataIndex="date" key="date" />
                 <Column
-                    title="Change status"
+                    title="Edit"
                     key="action"
                     width={"200px"}
                     render={(_, record) => {
                         console.log(record.product);
-                        return (<Button type="primary" block onClick={() => ChangeStatus(record)}>
-                            Status
+                        return (<Button type="primary" block onClick={() => EditRepair(record)}>
+                            Edit
                         </Button>)
                     }} />
                 <Column

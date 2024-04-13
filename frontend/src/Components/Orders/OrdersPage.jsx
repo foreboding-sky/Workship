@@ -6,28 +6,15 @@ import axios from 'axios';
 const { Column, ColumnGroup } = Table;
 
 const OrdersPage = () => {
-    useEffect(() => {
-        console.log("orders page axios get all");
-        axios.get("/api/Workshop").then(res => {
-            setArray(res.data);
-            console.log(res.data);
-        });
-    }, []);
 
     const [array, setArray] = useState([]);
 
     const ChangeStatus = (record) => {
-        axios.post("/api/Orders/" + record.id).then(res => {
-            let newArray = array.filter(order => { return order.id !== record.id; });
-            setArray(newArray);
-        })
+        //change order status
     };
 
     const DeleteOrder = (record) => {
-        axios.delete("/api/Orders/" + record.id).then(res => {
-            let newArray = array.filter(order => { return order.id !== record.id; });
-            setArray(newArray);
-        })
+        //delete
     };
 
     let navigate = useNavigate();

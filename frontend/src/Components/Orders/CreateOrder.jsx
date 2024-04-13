@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const { TextArea } = Input;
 
-const OrdersPage = () => {
+const CreateOrderPage = () => {
 
     const onSubmit = (values) => {
         console.log({ values });
@@ -48,4 +48,4 @@ const OrdersPage = () => {
     );
 }
 
-export default OrdersPage;
+export default CreateOrderPage;

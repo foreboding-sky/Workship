@@ -5,10 +5,13 @@ import axios from 'axios';
 
 const { TextArea } = Input;
 
-const CreateRepairPage = () => {
+const EditRepairPage = () => {
 
     const onSubmit = (values) => {
         console.log({ values });
+        // axios.post("/api/Orders", values)
+        //     .then(res => res => { navigate('*') })
+        //     .catch((error) => { console.log(error) });
     }
 
     return (
@@ -37,17 +40,19 @@ const CreateRepairPage = () => {
                 <Form.Item name="comment" label="Ordered Products">
                     <TextArea rows={4} />
                 </Form.Item> */}
+                {/* List of  services should be here
+                <Form.Item name="services" label="Services">
+                    <TextArea rows={4} />
+                </Form.Item> */}
                 <Form.Item name="comment" label="Comment">
                     <Input />
                 </Form.Item>
-                <Form.Item name="date" >
-                    <Button Type="primary" htmlType='submit' style={{ width: "50%" }}>
-                        Submit
-                    </Button>
+                <Form.Item name="discount" label="Discount">
+                    <Input />
                 </Form.Item>
             </Form>
         </div>
     );
 }
 
-export default CreateRepairPage;
+export default EditRepairPage;
