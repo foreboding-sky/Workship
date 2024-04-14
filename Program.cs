@@ -49,15 +49,15 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 //app.UseAuthorization();
 app.MapControllers();
-//app.UseEndpoints(endpoints => endpoints.MapControllers());
+app.UseEndpoints(endpoints => endpoints.MapControllers());
 
-// app.UseSpa(spa =>
-// {
-//     spa.Options.SourcePath = "frontend";
-//     if (app.Environment.IsDevelopment())
-//     {
-//         spa.UseReactDevelopmentServer(npmScript: "start");
-//     }
-// });
+app.UseSpa(spa =>
+{
+    spa.Options.SourcePath = "frontend";
+    if (app.Environment.IsDevelopment())
+    {
+        spa.UseReactDevelopmentServer(npmScript: "start");
+    }
+});
 
 app.Run();

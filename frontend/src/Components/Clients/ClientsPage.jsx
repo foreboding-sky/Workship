@@ -6,10 +6,36 @@ import axios from 'axios';
 const { Column, ColumnGroup } = Table;
 
 const ClientsPage = () => {
+    useEffect(() => {
+        console.log("useEffect on ClientsPage");
+        axios.get("api/Workshop/clients").then(res => {
+            setArray(res.data);
+            console.log(res.data);
+        })
+    }, [])
 
     const [array, setArray] = useState([]);
 
-    let navigate = useNavigate();
+    const columns = [
+        {
+            title: "Full Name",
+            dataIndex: "fullName",
+            key: "fullName",
+            render: fullName => fullName
+        },
+        {
+            title: "Phone",
+            dataIndex: "phone",
+            key: "phone",
+            render: phone => phone
+        },
+        {
+            title: "Comment",
+            dataIndex: "comment",
+            key: "comment",
+            render: comment => comment
+        }
+    ]
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'start', width: '100%' }}>
@@ -17,11 +43,7 @@ const ClientsPage = () => {
                     <Link to='/clients/create'>Add new customer</Link>
                 </Button>
             </div>
-            <Table dataSource={array}>
-                <Column title="Full Name" dataIndex="fullName" key="fullName" />
-                <Column title="Phone" dataIndex="phone" key="phone" />
-                <Column title="Comment" dataIndex="comment" key="comment" />
-            </Table >
+            <Table dataSource={array} columns={columns} />
         </div>
     );
 }

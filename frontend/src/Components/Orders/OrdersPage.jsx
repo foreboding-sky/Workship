@@ -7,6 +7,13 @@ const { Column, ColumnGroup } = Table;
 
 const OrdersPage = () => {
 
+    useEffect(() => {
+        console.log("useEffect on OrdersPage");
+        axios.get("api/Workshop/orders").then(res => {
+            setArray(res.data);
+            console.log(res.data);
+        })
+    }, [])
     const [array, setArray] = useState([]);
 
     const ChangeStatus = (record) => {
@@ -17,7 +24,71 @@ const OrdersPage = () => {
         //delete
     };
 
-    let navigate = useNavigate();
+    const columns = [
+        {
+            title: "User",
+            dataIndex: "user",
+            key: "user",
+            render: user => user
+        },
+        {
+            title: "Market",
+            dataIndex: "market",
+            key: "market",
+            render: market => market
+        },
+        {
+            title: "Device",
+            dataIndex: ["device", "brand"],
+            key: "specialist",
+            render: (text, record) => <p>{text} {record.device.model}</p>
+        },
+        {
+            title: "Client",
+            dataIndex: ["client", "fullName"],
+            key: "client",
+            render: client => client
+        },
+        {
+            title: "Product", //TODO HERE
+            dataIndex: "product",
+            key: "product",
+            render: product => product
+        },
+        {
+            title: "Comment",
+            dataIndex: "comment",
+            key: "comment",
+            render: comment => comment
+        },
+        {
+            title: "Est. Date", //TODO HERE
+            dataIndex: "date",
+            key: "date",
+            render: date => date
+        },
+        {
+            title: "Change status", //TODO HERE
+            dataIndex: "status",
+            key: "status",
+            render: (_, record) => {
+                return (<Button type="primary" block onClick={() => ChangeStatus(record)}>
+                    Edit
+                </Button>)
+            }
+        },
+        {
+            title: "Delete", //TODO HERE
+            dataIndex: "delete",
+            key: "delete",
+            render: (_, record) => {
+                return (<Button type="primary" block onClick={() => DeleteOrder(record)}>
+                    Delete
+                </Button>)
+            }
+        },
+    ]
+
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'start', width: '100%' }}>
@@ -25,35 +96,7 @@ const OrdersPage = () => {
                     <Link to='/orders/create'>Add new order</Link>
                 </Button>
             </div>
-            <Table dataSource={array}>
-                <Column title="User" dataIndex="user" key="user" />
-                <Column title="Market" dataIndex="market" key="market" />
-                <Column title="Client" dataIndex="client" key="client" />
-                <Column title="Device" dataIndex="device" key="device" />
-                <Column title="Product" dataIndex="product" key="product" />
-                <Column title="Comment" dataIndex="comment" key="comment" />
-                <Column title="Date" dataIndex="date" key="date" />
-                <Column
-                    title="Change status"
-                    key="action"
-                    width={"200px"}
-                    render={(_, record) => {
-                        console.log(record.product);
-                        return (<Button type="primary" block onClick={() => ChangeStatus(record)}>
-                            Status
-                        </Button>)
-                    }} />
-                <Column
-                    title="Delete"
-                    key="action"
-                    width={"200px"}
-                    render={(_, record) => {
-                        console.log(record.product);
-                        return (<Button type="primary" block onClick={() => DeleteOrder(record)}>
-                            Delete
-                        </Button>)
-                    }} />
-            </Table >
+            <Table dataSource={array} columns={columns} />
         </div>
     );
 }

@@ -6,6 +6,8 @@ import RepairsPage from './Components/Repairs/RepairsPage';
 import CreateRepair from './Components/Repairs/CreateRepair';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import AppLayout from './Components/Layouts/AppLayout';
+import ClientsPage from './Components/Clients/ClientsPage';
+import StoragePage from './Components/Storage/StoragePage';
 
 function App() {
   return (
@@ -17,8 +19,8 @@ function App() {
             <Route path="/workshop/create" element={<CreateRepair />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/orders/create" element={<CreateOrder />} />
-            <Route path="/storage" element={<OrdersPage />} />
-            <Route path="/storage/create" element={<OrdersPage />} />
+            <Route path="/clients" element={<ClientsPage />} />
+            <Route path="/storage" element={<StoragePage />} />
             <Route path="*" element={<Navigate to="/workshop" />} />
           </Routes>
         </AppLayout>
