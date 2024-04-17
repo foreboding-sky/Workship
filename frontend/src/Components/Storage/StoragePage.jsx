@@ -61,7 +61,7 @@ const StoragePage = () => {
                     <Link to='/storage'>Add new product</Link> {/*TODO HERE */}
                 </Button>
             </div>
-            <Table dataSource={array} columns={columns} />
+            <Table dataSource={array} columns={columns} rowKey="id" />
         </div>
     );
 }

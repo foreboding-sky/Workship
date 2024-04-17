@@ -91,7 +91,7 @@ const RepairsPage = () => {
                     <Link to='/workshop/create'>Add new repair</Link>
                 </Button>
             </div>
-            <Table dataSource={array} columns={columns} />
+            <Table dataSource={array} columns={columns} rowKey="id" />
         </div>
     );
 }

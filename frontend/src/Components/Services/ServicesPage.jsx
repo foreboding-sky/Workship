@@ -22,7 +22,7 @@ const ServicesPage = () => {
                     <Link to='/services/create'>Add new service</Link>
                 </Button>
             </div>
-            <Table dataSource={array}>
+            <Table dataSource={array} rowKey="id">
                 <Column title="Name" dataIndex="name" key="name" />
                 <Column title="Price" dataIndex="price" key="price" />
                 <Column

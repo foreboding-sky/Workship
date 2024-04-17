@@ -96,7 +96,7 @@ const OrdersPage = () => {
                     <Link to='/orders/create'>Add new order</Link>
                 </Button>
             </div>
-            <Table dataSource={array} columns={columns} />
+            <Table dataSource={array} columns={columns} rowKey="id" />
         </div>
     );
 }

@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Table, Divider, Button, Form, Input, Select, Space } from 'antd';
+import React from 'react';
+import { Form, Input, Button } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import axios from 'axios';
 
 const { TextArea } = Input;
 
 const CreateRepairPage = () => {
-
+    let values = '';
     const onSubmit = (values) => {
         console.log({ values });
     }
@@ -15,7 +13,7 @@ const CreateRepairPage = () => {
     return (
         <div style={{ width: "100%" }}>
             <Form layout="horizontal" labelCol={{ span: 8 }} style={{ width: "100%", maxWidth: 500, margin: '10px 0' }} onFinish={onSubmit}>
-                <Form.Item name="status" label="Status"> {/*should be enum here */}
+                <Form.Item name="status" label="Status">
                     <Input />
                 </Form.Item>
                 <Form.Item name="specialist" label="Specialist">
@@ -48,10 +46,10 @@ const CreateRepairPage = () => {
                                         display: "grid", gridTemplateColumns: "repeat(2, 1fr)",
                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
                                     }}>
-                                        <Form.Item {...restField} key={key + "product_title"} name={[name, "product_title"]} style={{ margin: "0 5px 0 0" }}>
+                                        <Form.Item {...restField} name={[name, "product_title"]} style={{ margin: "0 5px 0 0" }}>
                                             <Input placeholder="Product Title" />
                                         </Form.Item>
-                                        <Form.Item {...restField} key={key + "product_quantity"} name={[name, "product_quantity"]} style={{ margin: "0 0 0 5px" }}>
+                                        <Form.Item {...restField} name={[name, "product_quantity"]} style={{ margin: "0 0 0 5px" }}>
                                             <Input placeholder="Product Quantity" />
                                         </Form.Item>
                                     </div>
@@ -71,10 +69,10 @@ const CreateRepairPage = () => {
                     <TextArea rows={4} />
                 </Form.Item> */}
                 <Form.Item name="comment" label="Comment">
-                    <Input />
+                    <TextArea rows={4} />
                 </Form.Item>
-                <Form.Item name="date" >
-                    <Button Type="primary" htmlType='submit' style={{ width: "50%" }}>
+                <Form.Item>
+                    <Button type="primary" htmlType='submit' style={{ width: "50%" }}>
                         Submit
                     </Button>
                 </Form.Item>

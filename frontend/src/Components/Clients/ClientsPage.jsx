@@ -43,7 +43,7 @@ const ClientsPage = () => {
                     <Link to='/clients/create'>Add new customer</Link>
                 </Button>
             </div>
-            <Table dataSource={array} columns={columns} />
+            <Table dataSource={array} columns={columns} rowKey="id" />
         </div>
     );
 }
