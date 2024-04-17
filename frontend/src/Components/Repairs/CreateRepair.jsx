@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Button, Form, Input, DatePicker } from 'antd';
+import { Table, Divider, Button, Form, Input, Select, Space } from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from 'axios';
 
 const { TextArea } = Input;
@@ -12,8 +13,8 @@ const CreateRepairPage = () => {
     }
 
     return (
-        <div>
-            <Form layout="horizontal" labelCol={{ span: 8 }} style={{ maxWidth: 500, margin: '10px 0' }} onFinish={onSubmit}>
+        <div style={{ width: "100%" }}>
+            <Form layout="horizontal" labelCol={{ span: 8 }} style={{ width: "100%", maxWidth: 500, margin: '10px 0' }} onFinish={onSubmit}>
                 <Form.Item name="status" label="Status"> {/*should be enum here */}
                     <Input />
                 </Form.Item>
@@ -33,6 +34,38 @@ const CreateRepairPage = () => {
                 <Form.Item name="comment" label="Products">
                     <TextArea rows={4} />
                 </Form.Item> */}
+                <p>Add Products</p>
+                <Form.List name="products">
+                    {(fields, { add, remove }) => (
+                        <>
+                            {fields.map(({ key, name, ...restField }) => (
+                                <div key={key}
+                                    style={{
+                                        display: "flex", marginBottom: "8px", justifyContent: 'space-between',
+                                        alignItems: "center", gap: "5px", height: "fit-content", width: "100%"
+                                    }}>
+                                    <div style={{
+                                        display: "grid", gridTemplateColumns: "repeat(2, 1fr)",
+                                        gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
+                                    }}>
+                                        <Form.Item {...restField} key={key + "product_title"} name={[name, "product_title"]} style={{ margin: "0 5px 0 0" }}>
+                                            <Input placeholder="Product Title" />
+                                        </Form.Item>
+                                        <Form.Item {...restField} key={key + "product_quantity"} name={[name, "product_quantity"]} style={{ margin: "0 0 0 5px" }}>
+                                            <Input placeholder="Product Quantity" />
+                                        </Form.Item>
+                                    </div>
+                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
+                                </div>
+                            ))}
+                            <Form.Item>
+                                <Button type="dashed" onClick={add} block icon={<PlusOutlined />}>
+                                    Add item
+                                </Button>
+                            </Form.Item>
+                        </>
+                    )}
+                </Form.List>
                 {/* List of ordered products should be here
                 <Form.Item name="comment" label="Ordered Products">
                     <TextArea rows={4} />
