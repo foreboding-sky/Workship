@@ -7,22 +7,26 @@ const { TextArea } = Input;
 
 const CreateRepairPage = () => {
 
-    useEffect(() => {
-        console.log("useEffect on CreateRepairPage");
-        axios.defaults.baseURL = "http://localhost:5000/"
-        axios.get("api/Workshop/repairs/statuses").then(res => {
-            setStatuses(res.data);
-            console.log(res.data);
-        });
-        axios.get("api/Workshop/items/types").then(res => {
-            setItemTypes(res.data);
-            console.log(res.data);
-        });
-    }, [])
-
-
     const [statuses, setStatuses] = useState([]);
     const [itemTypes, setItemTypes] = useState([]);
+    const [deviceTypes, setDeviceTypes] = useState([]);
+
+    const fetchData = async () => {
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            const statuses = await axios.get("api/Workshop/repairs/statuses");
+            setStatuses(statuses.data);
+            console.log(statuses.data);
+            const itemTypes = await axios.get("api/Workshop/items/types");
+            setItemTypes(itemTypes.data);
+            console.log(itemTypes.data);
+            const deviceTypes = await axios.get("api/Workshop/devices/types");
+            setDeviceTypes(deviceTypes.data);
+            console.log(deviceTypes.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
     const onSubmit = (values) => {
         const request = {
@@ -41,7 +45,7 @@ const CreateRepairPage = () => {
             products: values.products.map(p => {
                 return {
                     item: {
-                        type: p.title,
+                        title: p.title,
                         device: {
                             type: values.device_type,
                             brand: values.device_brand,
@@ -61,13 +65,20 @@ const CreateRepairPage = () => {
         console.log({ request });
     };
 
+    const filterOption = (input, option) =>
+        (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+
+    useEffect(() => {
+        fetchData();
+    }, [])
+
     return (
         <div style={{ width: "100%" }}>
             <Form layout="horizontal" labelCol={{ span: 4 }} style={{ width: "100%", maxWidth: 700, margin: '10px 0' }} onFinish={onSubmit}>
                 <Form.Item name="status" label="Status" rules={[{ required: true, message: 'Status is required' }]}>
-                    <Select>
+                    <Select showSearch placeholder="Select status">
                         {statuses.map(status => {
-                            return <Select.Option key={status} value={status}>{status}</Select.Option>
+                            return <Select.Option filterOption={filterOption} key={status} value={status}>{status}</Select.Option>
                         })}
                     </Select>
                 </Form.Item>
@@ -80,8 +91,12 @@ const CreateRepairPage = () => {
                 <Form.Item name="phone" label="Phone">
                     <Input />
                 </Form.Item>
-                <Form.Item name="device_type" label="Device type">
-                    <Input />
+                <Form.Item name="device_type" label="Device type" rules={[{ required: true, message: 'Device type is required' }]}>
+                    <Select showSearch placeholder="Device Type">
+                        {deviceTypes.map(deviceType => {
+                            return <Select.Option filterOption={filterOption} key={deviceType} value={deviceType}>{deviceType}</Select.Option>
+                        })}
+                    </Select>
                 </Form.Item>
                 <Form.Item name="device_brand" label="Brand">
                     <Input />
@@ -110,10 +125,10 @@ const CreateRepairPage = () => {
                                         display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
                                     }}>
-                                        <Form.Item {...restField} name={[name, "product_type"]} style={{ margin: "0 5px 0 0" }} rules={[{ required: true, message: 'Status is required' }]}>
-                                            <Select placeholder="Product Type">
+                                        <Form.Item {...restField} name={[name, "product_type"]} style={{ margin: "0 5px 0 0" }} rules={[{ required: true, message: 'Item type is required' }]}>
+                                            <Select showSearch placeholder="Product Type">
                                                 {itemTypes.map(itemType => {
-                                                    return <Select.Option key={itemType} value={itemType}>{itemType}</Select.Option>
+                                                    return <Select.Option filterOption={filterOption} key={itemType} value={itemType}>{itemType}</Select.Option>
                                                 })}
                                             </Select>
                                         </Form.Item>

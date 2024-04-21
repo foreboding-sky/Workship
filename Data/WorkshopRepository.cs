@@ -124,6 +124,19 @@ namespace Workshop.Data
             return await context.Devices.ToListAsync();
         }
 
+        public async Task<List<string>> GetAllDeviceTypes()
+        {
+            return await Task<List<string>>.Run(() => //idk why lol i just was told to wrap it in Task so it'll actually be async
+            {
+                List<string> EnumNames = new List<string>();
+                foreach (string name in Enum.GetNames<DeviceType>())
+                {
+                    EnumNames.Add(name);
+                }
+                return EnumNames;
+            });
+        }
+
         public async Task<List<Item>> GetAllItems()
         {
             return await context.Items.Include(c => c.Device).ToListAsync();

@@ -27,6 +27,13 @@ namespace Workshop.Controllers
             return Ok(clientsReadDTOs);
         }
 
+        [HttpGet("devices/types")]
+        public async Task<IActionResult> GetAllDeviceTypes()
+        {
+            var deviceTypes = await repository.GetAllDeviceTypes();
+            return Ok(deviceTypes);
+        }
+
         [HttpGet("repairs")]
         public async Task<IActionResult> GetAllRepairs()
         {

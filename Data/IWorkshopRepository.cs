@@ -52,5 +52,6 @@ namespace Workshop.Data
         public Task<List<Device>> GetAllDevices();
         public Task<Device> GetDeviceById(Guid id);
         public Task<Device> GetDeviceByModel(Device device);
+        public Task<List<string>> GetAllDeviceTypes();
     }
 }
