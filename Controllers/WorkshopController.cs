@@ -34,6 +34,12 @@ namespace Workshop.Controllers
             List<RepairReadDTO> repairsReadDTOs = mapper.Map<List<Repair>, List<RepairReadDTO>>(repairs);
             return Ok(repairsReadDTOs);
         }
+        [HttpGet("repairs/statuses")]
+        public async Task<IActionResult> GetAllRepairStatuses()
+        {
+            var repairStatuses = await repository.GetAllRepairStatuses();
+            return Ok(repairStatuses);
+        }
 
         [HttpGet("stock")]
         public async Task<IActionResult> GetAllStockItem()
@@ -41,6 +47,13 @@ namespace Workshop.Controllers
             var stock = await repository.GetAllStockItems();
             List<StockItemReadDTO> stockItemReadDTOs = mapper.Map<List<StockItem>, List<StockItemReadDTO>>(stock);
             return Ok(stockItemReadDTOs);
+        }
+
+        [HttpGet("items/types")]
+        public async Task<IActionResult> GetAllItemTypes()
+        {
+            var itemTypes = await repository.GetAllItemTypes();
+            return Ok(itemTypes);
         }
 
         [HttpGet("orders")]

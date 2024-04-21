@@ -21,6 +21,7 @@ namespace Workshop.Data
         public Task<List<Repair>> GetAllRepairs();
         public Task<Repair> GetRepairById(Guid id);
         public Task<Repair> UpdateRepair(Repair repair);
+        public Task<List<string>> GetAllRepairStatuses();
         //repair item
         public Task<RepairItem> CreateRepairItem(RepairItem repairItem);
         //order
@@ -36,6 +37,7 @@ namespace Workshop.Data
         public Task<List<Item>> GetAllItems();
         public Task<Item> GetItemById(Guid id);
         public Task<Item> GetItemByModel(Item item);
+        public Task<List<string>> GetAllItemTypes();
         //stock item
         public Task<StockItem> CreateStockItem(StockItem stock);
         public Task DeleteStockItem(Guid id);

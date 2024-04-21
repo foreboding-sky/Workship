@@ -129,6 +129,19 @@ namespace Workshop.Data
             return await context.Items.Include(c => c.Device).ToListAsync();
         }
 
+        public async Task<List<string>> GetAllItemTypes()
+        {
+            return await Task<List<string>>.Run(() => //idk why lol i just was told to wrap it in Task so it'll actually be async
+            {
+                List<string> EnumNames = new List<string>();
+                foreach (string name in Enum.GetNames<ItemType>())
+                {
+                    EnumNames.Add(name);
+                }
+                return EnumNames;
+            });
+        }
+
         public async Task<List<Order>> GetAllOrders()
         {
             return await context.Orders.Include(c => c.Product).ThenInclude(c => c.Device).ToListAsync();
@@ -140,6 +153,19 @@ namespace Workshop.Data
                                         .Include(c => c.Device)
                                         .Include(c => c.Products).ThenInclude(c => c.Item).ThenInclude(c => c.Item).ThenInclude(c => c.Device)
                                         .Include(c => c.OrderedProducts).ThenInclude(c => c.Product).ThenInclude(c => c.Device).ToListAsync();
+        }
+
+        public async Task<List<string>> GetAllRepairStatuses()
+        {
+            return await Task<List<string>>.Run(() => //idk why lol i just was told to wrap it in Task so it'll actually be async
+            {
+                List<string> EnumNames = new List<string>();
+                foreach (string name in Enum.GetNames<RepairStatus>())
+                {
+                    EnumNames.Add(name);
+                }
+                return EnumNames;
+            });
         }
 
         public async Task<List<StockItem>> GetAllStockItems()
