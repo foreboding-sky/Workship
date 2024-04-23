@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import AppLayout from './Components/Layouts/AppLayout';
 import ClientsPage from './Components/Clients/ClientsPage';
 import StoragePage from './Components/Storage/StoragePage';
+import CreateClient from './Components/Clients/CreateClient';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/orders/create" element={<CreateOrder />} />
             <Route path="/clients" element={<ClientsPage />} />
+            <Route path="/clients/create" element={<CreateClient />} />
             <Route path="/storage" element={<StoragePage />} />
             <Route path="*" element={<Navigate to="/workshop" />} />
           </Routes>

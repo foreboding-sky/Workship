@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Select } from 'antd';
+import { Form, Input, Button, Select, InputNumber } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from 'axios';
 
@@ -31,7 +31,7 @@ const CreateRepairPage = () => {
             specialist: values.specialist,
             client: {
                 fullName: values.client,
-                phone: values.phone
+                phone: values.phone.toString()
             },
             device: {
                 type: values.device_type,
@@ -59,8 +59,6 @@ const CreateRepairPage = () => {
             totalPrice: 0,
             status: values.status
         }
-        console.log({ values });
-        console.log({ request });
         axios.post("api/Workshop/repairs", request).then(res => console.log({ res }));
     };
 
@@ -87,8 +85,11 @@ const CreateRepairPage = () => {
                 <Form.Item name="client" label="Client">
                     <Input />
                 </Form.Item>
-                <Form.Item name="phone" label="Phone">
-                    <Input />
+                <Form.Item name="phone"
+                    label="Phone Number"
+                    rules={[{ required: true, message: 'Please input your phone number!' }]}
+                >
+                    <InputNumber maxLength={12} style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item name="device_type" label="Device type" rules={[{ required: true, message: 'Device type is required' }]}>
                     <Select showSearch placeholder="Device Type">
