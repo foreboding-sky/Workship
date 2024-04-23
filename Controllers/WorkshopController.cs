@@ -129,7 +129,7 @@ namespace Workshop.Controllers
                 //var itemDB = await repository.GetStockItemByModel(product.Item);
                 var itemDB = await repository.GetStockItemByItemId(product.Item.Id);
                 if (itemDB == null)
-                    continue;
+                    continue; //item won't add if there are no entries of such item in database
                 var repairItem = await repository.CreateRepairItem(new RepairItem { Item = itemDB });
                 repairItemsDB.Add(repairItem);
             }

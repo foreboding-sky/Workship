@@ -16,13 +16,10 @@ const CreateRepairPage = () => {
             axios.defaults.baseURL = "http://localhost:5000/";
             const statuses = await axios.get("api/Workshop/repairs/statuses");
             setStatuses(statuses.data);
-            console.log(statuses.data);
             const itemTypes = await axios.get("api/Workshop/items/types");
             setItemTypes(itemTypes.data);
-            console.log(itemTypes.data);
             const deviceTypes = await axios.get("api/Workshop/devices/types");
             setDeviceTypes(deviceTypes.data);
-            console.log(deviceTypes.data);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -45,7 +42,8 @@ const CreateRepairPage = () => {
             products: values.products.map(p => {
                 return {
                     item: {
-                        title: p.title,
+                        title: p.product_title,
+                        type: p.product_type,
                         device: {
                             type: values.device_type,
                             brand: values.device_brand,
@@ -57,12 +55,13 @@ const CreateRepairPage = () => {
                 }
             }),
             comment: values.comment,
-            discount: '',
+            discount: 0,
             totalPrice: 0,
             status: values.status
         }
         console.log({ values });
         console.log({ request });
+        axios.post("api/Workshop/repairs", request).then(res => console.log({ res }));
     };
 
     const filterOption = (input, option) =>
