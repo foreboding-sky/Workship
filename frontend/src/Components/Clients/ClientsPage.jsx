@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Space, Table, Button, Tag } from 'antd';
+import { Link } from 'react-router-dom';
+import { Table, Button } from 'antd';
 import axios from 'axios';
 
 const { Column, ColumnGroup } = Table;

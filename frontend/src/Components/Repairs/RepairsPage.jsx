@@ -7,14 +7,21 @@ const { Column, ColumnGroup } = Table;
 
 const RepairsPage = () => {
 
-    useEffect(() => {
-        console.log("useEffect on RepairsPage");
-        axios.get("api/Workshop/repairs").then(res => {
-            setArray(res.data);
-            console.log(res.data);
-        })
-    }, [])
     const [array, setArray] = useState([]);
+
+    const fetchData = async () => {
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            const repairs = await axios.get("api/Workshop/repairs");
+            setArray(repairs.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [])
 
     const EditRepair = (record) => {
         //edit repair here and post it to api

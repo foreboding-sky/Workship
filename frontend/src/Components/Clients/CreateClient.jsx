@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, InputNumber } from 'antd';
 import axios from 'axios';
 
 const { TextArea } = Input;
 
 const CreateClientPage = () => {
+
+    const navigate = useNavigate();
 
     const onSubmit = (values) => {
         const request = {
@@ -15,6 +18,7 @@ const CreateClientPage = () => {
         console.log(request);
         axios.defaults.baseURL = "http://localhost:5000/";
         axios.post("api/Workshop/clients", request).then(res => console.log({ res }));
+        return navigate("/clients");
     };
 
     return (

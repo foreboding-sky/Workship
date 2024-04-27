@@ -6,15 +6,22 @@ import axios from 'axios';
 const { Column, ColumnGroup } = Table;
 
 const StoragePage = () => {
-    useEffect(() => {
-        console.log("useEffect on StoragePage");
-        axios.get("api/Workshop/stock").then(res => {
-            setArray(res.data);
-            console.log(res.data);
-        })
-    }, [])
-
     const [array, setArray] = useState([]);
+
+    const fetchData = async () => {
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            const storage = await axios.get("api/Workshop/stock");
+            setArray(storage.data);
+            console.log(storage.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [])
 
     const columns = [
         {

@@ -1,15 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Select, InputNumber } from 'antd';
+import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from "react-router-dom";
+import { Form, Input, Button, Select, InputNumber, Space, Divider, Modal } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from 'axios';
 
 const { TextArea } = Input;
 
 const CreateRepairPage = () => {
+    const navigate = useNavigate();
+    const [form] = Form.useForm(); // Define form instance
 
     const [statuses, setStatuses] = useState([]);
     const [itemTypes, setItemTypes] = useState([]);
     const [deviceTypes, setDeviceTypes] = useState([]);
+    const [clients, setClients] = useState([]);
+
+    //for adding new customer
+    const inputRef = useRef(null);
+    const [newClientName, setNewClientName] = useState('');
+
+    //modal
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalContent, setModalContent] = useState('');
 
     const fetchData = async () => {
         try {
@@ -20,9 +32,27 @@ const CreateRepairPage = () => {
             setItemTypes(itemTypes.data);
             const deviceTypes = await axios.get("api/Workshop/devices/types");
             setDeviceTypes(deviceTypes.data);
+            const clients = await axios.get("api/Workshop/clients");
+            setClients(clients.data);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
+    };
+
+    const onClientNameChange = (event) => {
+        setNewClientName(event.target.value);
+    };
+
+    const addItem = (e) => {
+        e.preventDefault();
+        axios.defaults.baseURL = "http://localhost:5000/";
+        axios.post("api/Workshop/clients", { FullName: newClientName })
+            .then(res => setClients([...clients, res.data]));
+        console.log(clients);
+        setNewClientName('');
+        setTimeout(() => {
+            inputRef.current?.focus();
+        }, 0);
     };
 
     const onSubmit = (values) => {
@@ -30,7 +60,7 @@ const CreateRepairPage = () => {
             user: '',
             specialist: values.specialist,
             client: {
-                fullName: values.client,
+                id: values.client,
                 phone: values.phone.toString()
             },
             device: {
@@ -39,7 +69,7 @@ const CreateRepairPage = () => {
                 model: values.device_model
             },
             complaint: values.complaint,
-            products: values.products.map(p => {
+            products: values.products ? values.products.map(p => {
                 return {
                     item: {
                         title: p.product_title,
@@ -53,13 +83,32 @@ const CreateRepairPage = () => {
                     price: p.product_price,
                     quantity: p.product_quantity
                 }
-            }),
+            }) : [],
             comment: values.comment,
             discount: 0,
             totalPrice: 0,
             status: values.status
         }
-        axios.post("api/Workshop/repairs", request).then(res => console.log({ res }));
+        axios.post("api/Workshop/repairs", request).then(res => {
+            console.log(res);
+            setModalContent('Data saved succesfully'); // Set modal content to success message
+            setModalVisible(true); // Show the modal
+        }).catch(error => {
+            console.error(error);
+            setModalContent('An error occured, data was not saved'); // Set modal content to error message
+            setModalVisible(true); // Show the modal
+        });
+    };
+
+    const handleModalOk = () => {
+        setModalVisible(false); // Close the modal
+        navigate("/");
+    };
+
+    const handleClientSelect = (clientId) => {
+        const selectedClient = clients.find(client => client.id === clientId);
+        if (selectedClient)
+            form.setFieldsValue({ phone: selectedClient.phone });
     };
 
     const filterOption = (input, option) =>
@@ -71,7 +120,10 @@ const CreateRepairPage = () => {
 
     return (
         <div style={{ width: "100%" }}>
-            <Form layout="horizontal" labelCol={{ span: 4 }} style={{ width: "100%", maxWidth: 700, margin: '10px 0' }} onFinish={onSubmit}>
+            <Modal title="Server response" open={modalVisible} onOk={handleModalOk} onCancel={() => setModalVisible(false)}>
+                <p>{modalContent}</p>
+            </Modal>
+            <Form form={form} layout="horizontal" labelCol={{ span: 4 }} style={{ width: "100%", maxWidth: 700, margin: '10px 0' }} onFinish={onSubmit}>
                 <Form.Item name="status" label="Status" rules={[{ required: true, message: 'Status is required' }]}>
                     <Select showSearch placeholder="Select status">
                         {statuses.map(status => {
@@ -83,7 +135,30 @@ const CreateRepairPage = () => {
                     <Input />
                 </Form.Item>
                 <Form.Item name="client" label="Client">
-                    <Input />
+                    <Select placeholder="Client full name"
+                        dropdownRender={(menu) => (
+                            <>
+                                {menu}
+                                <Divider style={{ margin: '8px 0', }} />
+                                <Space style={{ padding: '0 8px 4px', }}>
+                                    <Input
+                                        placeholder="Please enter item"
+                                        ref={inputRef}
+                                        value={newClientName}
+                                        onChange={onClientNameChange}
+                                        onKeyDown={(e) => e.stopPropagation()} />
+                                    <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                                        Add item
+                                    </Button>
+                                </Space>
+                            </>
+                        )}
+                        options={clients.map((client) => ({
+                            label: client.fullName,
+                            value: client.id,
+                        }))}
+                        onChange={handleClientSelect}
+                    />
                 </Form.Item>
                 <Form.Item name="phone"
                     label="Phone Number"
@@ -125,9 +200,9 @@ const CreateRepairPage = () => {
                                         display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
                                     }}>
-                                        <Form.Item {...restField} name={[name, "product_type"]} style={{ margin: "0 5px 0 0" }} rules={[{ required: true, message: 'Item type is required' }]}>
+                                        <Form.Item {...restField} name={[name, "product_type"]} style={{ margin: "0 5px 0 0" }} rules={fields.length > 0 ? [{ required: true, message: 'Item type is required' }] : []}>
                                             <Select showSearch placeholder="Product Type">
-                                                {itemTypes.map(itemType => {
+                                                {itemTypes && itemTypes.map(itemType => {
                                                     return <Select.Option filterOption={filterOption} key={itemType} value={itemType}>{itemType}</Select.Option>
                                                 })}
                                             </Select>
