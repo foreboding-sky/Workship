@@ -20,8 +20,17 @@ const OrdersPage = () => {
         //change order status
     };
 
-    const DeleteOrder = (record) => {
-        //delete
+    const DeleteOrder = async (record) => {
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            console.log(record);
+            await axios.delete("api/Workshop/orders/" + record.id);
+            const newArray = array.filter(item => item.id !== record.id);
+            console.log(newArray);
+            setArray(newArray);
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
     };
 
     const columns = [

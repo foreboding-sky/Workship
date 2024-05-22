@@ -1,10 +1,10 @@
-import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import OrdersPage from './Components/Orders/OrdersPage';
 import CreateOrder from './Components/Orders/CreateOrder';
 import RepairsPage from './Components/Repairs/RepairsPage';
 import CreateRepair from './Components/Repairs/CreateRepair';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import EditRepair from './Components/Repairs/EditRepair';
 import AppLayout from './Components/Layouts/AppLayout';
 import ClientsPage from './Components/Clients/ClientsPage';
 import StoragePage from './Components/Storage/StoragePage';
@@ -18,6 +18,7 @@ function App() {
           <Routes>
             <Route path="/workshop" element={<RepairsPage />} />
             <Route path="/workshop/create" element={<CreateRepair />} />
+            <Route path="/workshop/edit" element={<EditRepair />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/orders/create" element={<CreateOrder />} />
             <Route path="/clients" element={<ClientsPage />} />

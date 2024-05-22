@@ -16,6 +16,19 @@ const ClientsPage = () => {
 
     const [array, setArray] = useState([]);
 
+    const DeleteRepair = async (record) => {
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            console.log(record);
+            await axios.delete("api/Workshop/clients/" + record.id);
+            const newArray = array.filter(item => item.id !== record.id);
+            console.log(newArray);
+            setArray(newArray);
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    };
+
     const columns = [
         {
             title: "Full Name",
@@ -34,6 +47,16 @@ const ClientsPage = () => {
             dataIndex: "comment",
             key: "comment",
             render: comment => comment
+        },
+        {
+            title: "Delete",
+            dataIndex: "delete",
+            key: "delete",
+            render: (_, record) => {
+                return (<Button type="primary" block onClick={() => DeleteRepair(record)}>
+                    Delete
+                </Button>)
+            }
         }
     ]
     return (

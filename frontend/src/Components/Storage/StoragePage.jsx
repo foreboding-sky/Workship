@@ -23,6 +23,19 @@ const StoragePage = () => {
         fetchData();
     }, [])
 
+    const DeleteRepair = async (record) => {
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            console.log(record);
+            await axios.delete("api/Workshop/storage/" + record.id);
+            const newArray = array.filter(item => item.id !== record.id);
+            console.log(newArray);
+            setArray(newArray);
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    };
+
     const columns = [
         {
             title: "Type",
@@ -59,6 +72,16 @@ const StoragePage = () => {
             dataIndex: "quantity",
             key: "quantity",
             render: quantity => quantity
+        },
+        {
+            title: "Delete",
+            dataIndex: "delete",
+            key: "delete",
+            render: (_, record) => {
+                return (<Button type="primary" block onClick={() => DeleteRepair(record)}>
+                    Delete
+                </Button>)
+            }
         }
     ]
     return (

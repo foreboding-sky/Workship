@@ -27,8 +27,17 @@ const RepairsPage = () => {
         //edit repair here and post it to api
     };
 
-    const DeleteRepair = (record) => {
-        //delete repair record here
+    const DeleteRepair = async (record) => {
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            console.log(record);
+            await axios.delete("api/Workshop/repairs/" + record.id);
+            const newArray = array.filter(item => item.id !== record.id);
+            console.log(newArray);
+            setArray(newArray);
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
     };
 
     const columns = [
@@ -74,8 +83,8 @@ const RepairsPage = () => {
             dataIndex: "edit",
             key: "edit",
             render: (_, record) => {
-                return (<Button type="primary" block onClick={() => EditRepair(record)}>
-                    Edit
+                return (<Button type="primary" block>
+                    <Link to='/workshop/edit'>Edit</Link>
                 </Button>)
             }
         },
