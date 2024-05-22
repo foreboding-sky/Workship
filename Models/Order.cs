@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 namespace Workshop.Models
 {
     public class Order
@@ -11,5 +12,18 @@ namespace Workshop.Models
         public DateTime? DateEstimated { get; set; }
         public DateTime? DateRecieved { get; set; } //should be Datetime.Now on processed
         public bool? IsProcessed { get; set; }
+    }
+    public class OrderComparer : IEqualityComparer<Order>
+    {
+
+        public bool Equals(Order? x, Order? y)
+        {
+            return x?.Id == y?.Id;
+        }
+
+        public int GetHashCode([DisallowNull] Order obj)
+        {
+            return obj.Id.ToString().GetHashCode();
+        }
     }
 }

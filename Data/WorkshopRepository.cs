@@ -330,19 +330,24 @@ namespace Workshop.Data
 
             var existingItems = repairDB.Products.ToList();
             var selectedItems = repair.Products.ToList();
-            var itemsToAdd = selectedItems.Except(existingItems).ToList();
-            var itemsToRemove = existingItems.Except(selectedItems).ToList();
+            var itemsToAdd = selectedItems.Except(existingItems, new RepairItemComparer()).ToList();
+            var itemsToRemove = existingItems.Except(selectedItems, new RepairItemComparer()).ToList();
+            List<StockItem> itemsToAddDB = new List<StockItem>();
+            foreach (var item in itemsToAdd)
+            {
+                itemsToAddDB.Add(context.Stock.Find(item.Item.Id));
+            }
 
             foreach (var item in itemsToRemove)
                 repairDB.Products.Remove(item);
 
-            foreach (var item in itemsToAdd)
-                repairDB.Products.Add(new RepairItem() { Item = item.Item });
+            foreach (var item in itemsToAddDB)
+                repairDB.Products.Add(new RepairItem() { Item = item });
 
             var existingOrders = repairDB.OrderedProducts.ToList();
             var selectedOrders = repair.OrderedProducts.ToList();
-            var ordersToAdd = selectedOrders.Except(existingOrders).ToList();
-            var ordersToRemove = existingOrders.Except(selectedOrders).ToList();
+            var ordersToAdd = selectedOrders.Except(existingOrders, new OrderComparer()).ToList();
+            var ordersToRemove = existingOrders.Except(selectedOrders, new OrderComparer()).ToList();
 
             foreach (var item in ordersToRemove)
                 repairDB.OrderedProducts.Remove(item);

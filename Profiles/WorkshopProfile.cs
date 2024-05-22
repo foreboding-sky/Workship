@@ -7,6 +7,9 @@ namespace Workshop.Profiles
     {
         public WorkshopProfile()
         {
+            CreateMap<StockItemWriteDTO, RepairItem>()
+                .ForMember(dst => dst.Item, src => src.MapFrom(src => src));
+
             CreateMap<ClientWriteDTO, Client>();
             CreateMap<Client, ClientReadDTO>();
 
@@ -43,9 +46,6 @@ namespace Workshop.Profiles
                 .ForMember(dst => dst.OrderedProducts, src => src.MapFrom(src => src.OrderedProducts))
                 //.ForMember(dst => dst.RepairServices, src => src.MapFrom(src => src.RepairServices))
                 .ForMember(dst => dst.Device, src => src.MapFrom(src => src.Device));
-
-            CreateMap<StockItemWriteDTO, RepairItem>()
-                .ForMember(dst => dst.Item, src => src.MapFrom(src => src));
         }
     }
 }

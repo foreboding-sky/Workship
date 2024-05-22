@@ -108,7 +108,7 @@ namespace Workshop.Controllers
             var client = await repository.GetClientById(repair.Client.Id);
             if (client == null)
             {
-                client = repair.Client;
+                        client = repair.Client;
                 client.Id = Guid.NewGuid();
                 await repository.CreateClient(client);
             }
@@ -127,7 +127,7 @@ namespace Workshop.Controllers
             foreach (var product in repair.Products)
             {
                 //var itemDB = await repository.GetStockItemByModel(product.Item);
-                var itemDB = await repository.GetStockItemByItemId(product.Item.Id);
+                var itemDB = await repository.GetStockItemByItemId(product.Item.Item.Id);
                 if (itemDB == null)
                     continue; //item won't add if there are no entries of such item in database
                 var repairItem = await repository.CreateRepairItem(new RepairItem { Item = itemDB });
