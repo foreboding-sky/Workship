@@ -7,6 +7,7 @@ namespace Workshop.Models
         public string? Source { get; set; }
         public Repair? Repair { get; set; }
         public Item? Product { get; set; }
+        public double? Price { get; set; }
         public string? Comment { get; set; }
         public DateTime? DateOrdered { get; set; } //should be Datetime.Now on creation
         public DateTime? DateEstimated { get; set; }
