@@ -15,10 +15,10 @@ const CreateRepairPage = () => {
     const [deviceTypes, setDeviceTypes] = useState([]);
     const [clients, setClients] = useState([]);
     const [stockItems, setStockItems] = useState([]);
-    const [stockItemsTitles, setStockItemsTitles] = useState([]);
+    const [stockItemsFiltered, setStockItemsFiltered] = useState([]);
 
     //for adding new customer
-    const inputRef = useRef(null);
+    const clientNameRef = useRef(null);
     const [newClientName, setNewClientName] = useState('');
 
     //modal
@@ -38,9 +38,7 @@ const CreateRepairPage = () => {
             setClients(clients.data);
             const stockItems = await axios.get("api/Workshop/stock");
             setStockItems(stockItems.data);
-            const stockItemsTitles = stockItems.data.map(item => item.item.title);
-            setStockItemsTitles(stockItemsTitles);
-            console.log(stockItemsTitles);
+            setStockItemsFiltered(stockItems.data);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -50,16 +48,24 @@ const CreateRepairPage = () => {
         setNewClientName(event.target.value);
     };
 
-    const addClient = (e) => {
-        e.preventDefault();
-        axios.defaults.baseURL = "http://localhost:5000/";
-        axios.post("api/Workshop/clients", { FullName: newClientName })
-            .then(res => setClients([...clients, res.data]));
-        console.log(clients);
-        setNewClientName('');
-        setTimeout(() => {
-            inputRef.current?.focus();
-        }, 0);
+    const onItemTypeChange = (value, key) => {
+        setStockItemsFiltered(stockItems.filter(stockItem => stockItem.item.type === value));
+        // const fields = form.getFieldsValue();
+        // const {products} =  fields;
+        // Object.assign(products[key], { })
+        // form.setFieldsValue({ products })
+    };
+
+    const onItemTitleChange = (value, key) => {
+        const selectedStockItem = stockItems.find(stockItem => stockItem.item.title === value);
+        if (selectedStockItem) {
+            const productType = selectedStockItem.item.type;
+            const productPrice = selectedStockItem.price;
+            const fields = form.getFieldsValue();
+            const {products} =  fields;
+            Object.assign(products[key], { product_type: productType, product_price:  productPrice})
+            form.setFieldsValue({ products })
+        }
     };
 
     const onSubmit = (values) => {
@@ -122,6 +128,18 @@ const CreateRepairPage = () => {
         });
     };
 
+    const addClient = (e) => {
+        e.preventDefault();
+        axios.defaults.baseURL = "http://localhost:5000/";
+        axios.post("api/Workshop/clients", { FullName: newClientName })
+            .then(res => setClients([...clients, res.data]));
+        console.log(clients);
+        setNewClientName('');
+        setTimeout(() => {
+            clientNameRef.current?.focus();
+        }, 0);
+    };
+
     const handleModalOk = () => {
         setModalVisible(false); // Close the modal
         navigate("/");
@@ -132,10 +150,6 @@ const CreateRepairPage = () => {
         if (selectedClient)
             form.setFieldsValue({ phone: selectedClient.phone });
     };
-
-    const handleItemSelect = (itemId) => {
-
-    }
 
     const filterOption = (input, option) =>
         (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
@@ -169,7 +183,7 @@ const CreateRepairPage = () => {
                                 <Space style={{ padding: '0 8px 4px', }}>
                                     <Input
                                         placeholder="Please enter item"
-                                        ref={inputRef}
+                                        ref={clientNameRef}
                                         value={newClientName}
                                         onChange={onClientNameChange}
                                         onKeyDown={(e) => e.stopPropagation()} />
@@ -227,16 +241,24 @@ const CreateRepairPage = () => {
                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
                                     }}>
                                         <Form.Item {...restField} name={[name, "product_type"]} style={{ margin: "0 5px 0 0" }} rules={fields.length > 0 ? [{ required: true, message: 'Item type is required' }] : []}>
-                                            <Select showSearch placeholder="Product Type">
+                                            <Select showSearch placeholder="Product Type"  onSelect={value => onItemTypeChange(value, key)}>
                                                 {itemTypes && itemTypes.map(itemType => {
-                                                    return <Select.Option filterOption={filterOption} key={itemType} value={itemType}>{itemType}</Select.Option>
+                                                    return <Select.Option filterOption={filterOption} 
+                                                    key={itemType} 
+                                                    value={itemType}>
+                                                        {itemType}
+                                                    </Select.Option>
                                                 })}
                                             </Select>
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, "product_title"]} style={{ margin: "0 5px 0 0" }} rules={fields.length > 0 ? [{ required: true, message: 'Item title is required' }] : []}>
-                                            <Select showSearch placeholder="Product Type">
-                                                {stockItemsTitles && stockItemsTitles.map(itemTitle => {
-                                                    return <Select.Option filterOption={filterOption} key={itemTitle} value={itemTitle}>{itemTitle}</Select.Option>
+                                            <Select showSearch placeholder="Product Title" onSelect={value => onItemTitleChange(value, key)}>
+                                                {stockItemsFiltered && stockItemsFiltered.map((stockItem, idx) => {
+                                                    return <Select.Option filterOption={filterOption} 
+                                                    key={stockItem.id} 
+                                                    value={stockItem.item.title}>
+                                                        {stockItem.item.title}
+                                                    </Select.Option>
                                                 })}
                                             </Select>
                                         </Form.Item>
