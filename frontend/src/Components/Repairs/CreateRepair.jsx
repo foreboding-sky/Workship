@@ -15,7 +15,7 @@ const CreateRepairPage = () => {
     const [deviceTypes, setDeviceTypes] = useState([]);
     const [clients, setClients] = useState([]);
     const [stockItems, setStockItems] = useState([]);
-    const [stockItemsFiltered, setStockItemsFiltered] = useState([]);
+    const [selectedItemTypes, setSelectedItemTypes] = useState([]);
 
     //for adding new customer
     const clientNameRef = useRef(null);
@@ -38,7 +38,6 @@ const CreateRepairPage = () => {
             setClients(clients.data);
             const stockItems = await axios.get("api/Workshop/stock");
             setStockItems(stockItems.data);
-            setStockItemsFiltered(stockItems.data);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -49,11 +48,10 @@ const CreateRepairPage = () => {
     };
 
     const onItemTypeChange = (value, key) => {
-        setStockItemsFiltered(stockItems.filter(stockItem => stockItem.item.type === value));
-        // const fields = form.getFieldsValue();
-        // const {products} =  fields;
-        // Object.assign(products[key], { })
-        // form.setFieldsValue({ products })
+        setSelectedItemTypes(prevDictionary => ({
+            ...prevDictionary,
+            [key]: form.getFieldsValue().products[key].product_type
+        }));
     };
 
     const onItemTitleChange = (value, key) => {
@@ -61,9 +59,8 @@ const CreateRepairPage = () => {
         if (selectedStockItem) {
             const productType = selectedStockItem.item.type;
             const productPrice = selectedStockItem.price;
-            const fields = form.getFieldsValue();
-            const {products} =  fields;
-            Object.assign(products[key], { product_type: productType, product_price:  productPrice})
+            const { products } = form.getFieldsValue();
+            Object.assign(products[key], { product_type: productType, product_price: productPrice, product_quantity: 1 })
             form.setFieldsValue({ products })
         }
     };
@@ -241,11 +238,11 @@ const CreateRepairPage = () => {
                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
                                     }}>
                                         <Form.Item {...restField} name={[name, "product_type"]} style={{ margin: "0 5px 0 0" }} rules={fields.length > 0 ? [{ required: true, message: 'Item type is required' }] : []}>
-                                            <Select showSearch placeholder="Product Type"  onSelect={value => onItemTypeChange(value, key)}>
+                                            <Select showSearch placeholder="Product Type" onSelect={value => onItemTypeChange(value, key)}>
                                                 {itemTypes && itemTypes.map(itemType => {
-                                                    return <Select.Option filterOption={filterOption} 
-                                                    key={itemType} 
-                                                    value={itemType}>
+                                                    return <Select.Option filterOption={filterOption}
+                                                        key={itemType}
+                                                        value={itemType}>
                                                         {itemType}
                                                     </Select.Option>
                                                 })}
@@ -253,13 +250,15 @@ const CreateRepairPage = () => {
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, "product_title"]} style={{ margin: "0 5px 0 0" }} rules={fields.length > 0 ? [{ required: true, message: 'Item title is required' }] : []}>
                                             <Select showSearch placeholder="Product Title" onSelect={value => onItemTitleChange(value, key)}>
-                                                {stockItemsFiltered && stockItemsFiltered.map((stockItem, idx) => {
-                                                    return <Select.Option filterOption={filterOption} 
-                                                    key={stockItem.id} 
-                                                    value={stockItem.item.title}>
-                                                        {stockItem.item.title}
-                                                    </Select.Option>
-                                                })}
+                                                {stockItems &&
+                                                    stockItems.filter(stockItem => stockItem.item.type === selectedItemTypes[key] || selectedItemTypes[key] === undefined)
+                                                        .map((stockItem) => {
+                                                            return <Select.Option filterOption={filterOption}
+                                                                key={stockItem.id}
+                                                                value={stockItem.item.title}>
+                                                                {stockItem.item.title}
+                                                            </Select.Option>
+                                                        })}
                                             </Select>
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, "product_quantity"]} style={{ margin: "0 5px 0 0" }}>
