@@ -59,11 +59,32 @@ namespace Workshop.Data
             return repairItem;
         }
 
-        public async Task<StockItem> CreateStockItem(StockItem stock)
+        public async Task<RepairService> CreateRepairService(RepairService repairService)
         {
-            context.Stock.Add(stock);
+            context.RepairServices.Add(repairService);
             await context.SaveChangesAsync();
-            return stock;
+            return repairService;
+        }
+
+        public async Task<Service> CreateService(Service service)
+        {
+            context.Services.Add(service);
+            await context.SaveChangesAsync();
+            return service;
+        }
+
+        public async Task<Specialist> CreateSpecialist(Specialist specialist)
+        {
+            context.Specialists.Add(specialist);
+            await context.SaveChangesAsync();
+            return specialist;
+        }
+
+        public async Task<StockItem> CreateStockItem(StockItem stockItem)
+        {
+            context.Stock.Add(stockItem);
+            await context.SaveChangesAsync();
+            return stockItem;
         }
 
         public async Task DeleteClient(Guid id)
@@ -106,11 +127,27 @@ namespace Workshop.Data
             await context.SaveChangesAsync();
         }
 
+        public async Task DeleteService(Guid id)
+        {
+            var service = context.Services.Find(id);
+            if (service is null) return;
+            context.Services.Remove(service);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteSpecialist(Guid id)
+        {
+            var specialist = context.Specialists.Find(id);
+            if (specialist is null) return;
+            context.Specialists.Remove(specialist);
+            await context.SaveChangesAsync();
+        }
+
         public async Task DeleteStockItem(Guid id)
         {
-            var stock = context.Stock.Find(id);
-            if (stock is null) return;
-            context.Stock.Remove(stock);
+            var stockItem = context.Stock.Find(id);
+            if (stockItem is null) return;
+            context.Stock.Remove(stockItem);
             await context.SaveChangesAsync();
         }
 
@@ -181,6 +218,16 @@ namespace Workshop.Data
             });
         }
 
+        public async Task<List<Service>> GetAllServices()
+        {
+            return await context.Services.ToListAsync();
+        }
+
+        public async Task<List<Specialist>> GetAllSpecialists()
+        {
+            return await context.Specialists.ToListAsync();
+        }
+
         public async Task<List<StockItem>> GetAllStockItems()
         {
             return await context.Stock.Include(c => c.Item).ThenInclude(c => c.Device).ToListAsync();
@@ -240,6 +287,30 @@ namespace Workshop.Data
         public async Task<Repair> GetRepairById(Guid id)
         {
             return GetAllRepairs().Result.Find(repair => repair.Id == id);
+        }
+
+        public async Task<Service> GetServiceById(Guid id)
+        {
+            return GetAllServices().Result.Find(res => res.Id == id);
+        }
+
+        public async Task<Service> GetServiceByModel(Service service)
+        {
+            return GetAllServices().Result
+                            .Find(res => res.Name == service.Name
+                            && res.Price == service.Price);
+        }
+
+        public async Task<Specialist> GetSpecialistById(Guid id)
+        {
+            return await context.Specialists.FindAsync(id);
+        }
+
+        public async Task<Specialist> GetSpecialistByModel(Specialist specialist)
+        {
+            return GetAllSpecialists().Result
+                            .Find(res => res.FullName == specialist.FullName
+                            && res.Comment == specialist.Comment);
         }
 
         public async Task<StockItem> GetStockItemById(Guid id)
@@ -328,14 +399,15 @@ namespace Workshop.Data
             if (repairDB == null)
                 return null;
 
+            //Products update
             var existingItems = repairDB.Products.ToList();
             var selectedItems = repair.Products.ToList();
             var itemsToAdd = selectedItems.Except(existingItems, new RepairItemComparer()).ToList();
             var itemsToRemove = existingItems.Except(selectedItems, new RepairItemComparer()).ToList();
             List<StockItem> itemsToAddDB = new List<StockItem>();
-            foreach (var item in itemsToAdd)
+            foreach (var repairItem in itemsToAdd)
             {
-                itemsToAddDB.Add(context.Stock.Find(item.Item.Id));
+                itemsToAddDB.Add(context.Stock.Find(repairItem.Item.Id));
             }
 
             foreach (var item in itemsToRemove)
@@ -344,6 +416,7 @@ namespace Workshop.Data
             foreach (var item in itemsToAddDB)
                 repairDB.Products.Add(new RepairItem() { Item = item });
 
+            //Ordered products update
             var existingOrders = repairDB.OrderedProducts.ToList();
             var selectedOrders = repair.OrderedProducts.ToList();
             var ordersToAdd = selectedOrders.Except(existingOrders, new OrderComparer()).ToList();
@@ -353,7 +426,24 @@ namespace Workshop.Data
                 repairDB.OrderedProducts.Remove(item);
 
             foreach (var item in ordersToAdd)
-                repairDB.OrderedProducts.Add(item); //TODO
+                repairDB.OrderedProducts.Add(item);
+
+            //Services update
+            var existingServices = repairDB.RepairServices.ToList();
+            var selectedServices = repair.RepairServices.ToList();
+            var servicesToAdd = selectedServices.Except(existingServices, new RepairServiceComparer()).ToList();
+            var servicesToRemove = existingServices.Except(selectedServices, new RepairServiceComparer()).ToList();
+            List<Service> ServicesToAddDB = new List<Service>();
+            foreach (var repairService in servicesToAdd)
+            {
+                ServicesToAddDB.Add(context.Services.Find(repairService.Service.Id));
+            }
+
+            foreach (var service in servicesToRemove)
+                repairDB.RepairServices.Remove(service);
+
+            foreach (var service in ServicesToAddDB)
+                repairDB.RepairServices.Add(new RepairService() { Service = service });
 
             if (repairDB.Client.Id != repair.Client.Id)
                 repairDB.Client = repair.Client;
@@ -363,6 +453,10 @@ namespace Workshop.Data
                 repairDB.Client.Phone = repair.Client.Phone;
                 repairDB.Client.Comment = repair.Client.Comment;
             }
+
+            if (repairDB.Specialist.Id != repair.Specialist.Id)
+                repairDB.Specialist = repair.Specialist;
+
             if (repairDB.Device.Id != repair.Device.Id)
                 repairDB.Device = repair.Device;
             else
@@ -380,6 +474,20 @@ namespace Workshop.Data
             repairDB.Status = repair.Status;
             await context.SaveChangesAsync();
             return repairDB;
+        }
+
+        public async Task<Specialist> UpdateSpecialist(Specialist specialist)
+        {
+            var specialisttDB = await GetSpecialistById(specialist.Id);
+            if (specialisttDB == null)
+                specialisttDB = await GetSpecialistByModel(specialist);
+            if (specialisttDB == null)
+                return null;
+
+            specialisttDB.FullName = specialisttDB.FullName;
+            specialisttDB.Comment = specialisttDB.Comment;
+            await context.SaveChangesAsync();
+            return specialisttDB;
         }
 
         public async Task<StockItem> UpdateStockItem(StockItem stock)

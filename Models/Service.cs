@@ -4,7 +4,7 @@ namespace Workshop.Models
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }
-        public string? Price { get; set; }
-        public List<RepairService>? RepairServices { get; set; }
+        public double? Price { get; set; }
+        public List<RepairService>? Repairs { get; set; }
     }
 }

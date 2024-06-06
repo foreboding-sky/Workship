@@ -13,7 +13,7 @@ const AppLayout = ({ children }) => {
     ]
 
     return (
-        <Layout style={{ height: "100%" }}>
+        <Layout style={{ height: "100vh" }}> {/* TODO fix style here */}
             <Sider>
                 <Menu
                     defaultSelectedKeys={['1']}

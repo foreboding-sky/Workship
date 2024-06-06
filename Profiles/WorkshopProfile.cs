@@ -9,9 +9,14 @@ namespace Workshop.Profiles
         {
             CreateMap<StockItemWriteDTO, RepairItem>()
                 .ForMember(dst => dst.Item, src => src.MapFrom(src => src));
+            CreateMap<ServiceWriteDTO, RepairService>()
+                .ForMember(dst => dst.Service, src => src.MapFrom(src => src));
 
             CreateMap<ClientWriteDTO, Client>();
             CreateMap<Client, ClientReadDTO>();
+
+            CreateMap<SpecialistWriteDTO, Specialist>();
+            CreateMap<Specialist, SpecialistReadDTO>();
 
             CreateMap<DeviceWriteDTO, Device>();
             CreateMap<Device, DeviceReadDTO>();
@@ -36,15 +41,17 @@ namespace Workshop.Profiles
 
             CreateMap<RepairWriteDTO, Repair>()
                 .ForMember(dst => dst.Client, src => src.MapFrom(src => src.Client))
+                .ForMember(dst => dst.Specialist, src => src.MapFrom(src => src.Specialist))
                 .ForMember(dst => dst.Products, src => src.MapFrom(src => src.Products))
                 .ForMember(dst => dst.OrderedProducts, src => src.MapFrom(src => src.OrderedProducts))
-                //.ForMember(dst => dst.RepairServices, src => src.MapFrom(src => src.RepairServices))
+                .ForMember(dst => dst.RepairServices, src => src.MapFrom(src => src.RepairServices))
                 .ForMember(dst => dst.Device, src => src.MapFrom(src => src.Device));
             CreateMap<Repair, RepairReadDTO>()
                 .ForMember(dst => dst.Client, src => src.MapFrom(src => src.Client))
+                .ForMember(dst => dst.Specialist, src => src.MapFrom(src => src.Specialist))
                 .ForMember(dst => dst.Products, src => src.MapFrom(src => src.Products.Select(x => x.Item).ToList()))
                 .ForMember(dst => dst.OrderedProducts, src => src.MapFrom(src => src.OrderedProducts))
-                //.ForMember(dst => dst.RepairServices, src => src.MapFrom(src => src.RepairServices))
+                .ForMember(dst => dst.RepairServices, src => src.MapFrom(src => src.RepairServices))
                 .ForMember(dst => dst.Device, src => src.MapFrom(src => src.Device));
         }
     }

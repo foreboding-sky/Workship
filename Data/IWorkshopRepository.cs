@@ -15,6 +15,13 @@ namespace Workshop.Data
         public Task<Client> GetClientById(Guid id);
         public Task<Client> GetClientByModel(Client client);
         public Task<Client> UpdateClient(Client client);
+        //specialist
+        public Task<Specialist> CreateSpecialist(Specialist specialist);
+        public Task DeleteSpecialist(Guid id);
+        public Task<List<Specialist>> GetAllSpecialists();
+        public Task<Specialist> GetSpecialistById(Guid id);
+        public Task<Specialist> GetSpecialistByModel(Specialist specialist);
+        public Task<Specialist> UpdateSpecialist(Specialist specialist);
         //repair
         public Task<Repair> CreateRepair(Repair repair);
         public Task DeleteRepair(Guid id);
@@ -24,6 +31,8 @@ namespace Workshop.Data
         public Task<List<string>> GetAllRepairStatuses();
         //repair item
         public Task<RepairItem> CreateRepairItem(RepairItem repairItem);
+        //repair service
+        public Task<RepairService> CreateRepairService(RepairService repairItem);
         //order
         public Task<Order> CreateOrder(Order order);
         public Task DeleteOrder(Guid id);
@@ -31,21 +40,27 @@ namespace Workshop.Data
         public Task<Order> GetOrderById(Guid id);
         public Task<Order> GetOrderByModel(Order order);
         public Task<Order> UpdateOrder(Order order);
-        //item
+        //service
         public Task<Item> CreateItem(Item item);
         public Task DeleteItem(Guid id);
         public Task<List<Item>> GetAllItems();
         public Task<Item> GetItemById(Guid id);
         public Task<Item> GetItemByModel(Item item);
         public Task<List<string>> GetAllItemTypes();
+        //item
+        public Task<Service> CreateService(Service service);
+        public Task DeleteService(Guid id);
+        public Task<List<Service>> GetAllServices();
+        public Task<Service> GetServiceById(Guid id);
+        public Task<Service> GetServiceByModel(Service service);
         //stock item
-        public Task<StockItem> CreateStockItem(StockItem stock);
+        public Task<StockItem> CreateStockItem(StockItem stockItem);
         public Task DeleteStockItem(Guid id);
         public Task<List<StockItem>> GetAllStockItems();
         public Task<StockItem> GetStockItemById(Guid id);
         public Task<StockItem> GetStockItemByItemId(Guid id);
-        public Task<StockItem> GetStockItemByModel(StockItem stock);
-        public Task<StockItem> UpdateStockItem(StockItem stock);
+        public Task<StockItem> GetStockItemByModel(StockItem stockItem);
+        public Task<StockItem> UpdateStockItem(StockItem stockItem);
         //device
         public Task<Device> CreateDevice(Device device);
         public Task DeleteDevice(Guid id);

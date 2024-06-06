@@ -27,6 +27,14 @@ namespace Workshop.Controllers
             return Ok(clientsReadDTOs);
         }
 
+        [HttpGet("specialists")]
+        public async Task<IActionResult> GetAllSpecialists()
+        {
+            var specialists = await repository.GetAllSpecialists();
+            List<SpecialistReadDTO> specialistReadDTOs = mapper.Map<List<Specialist>, List<SpecialistReadDTO>>(specialists);
+            return Ok(specialistReadDTOs);
+        }
+
         [HttpGet("devices/types")]
         public async Task<IActionResult> GetAllDeviceTypes()
         {
@@ -63,6 +71,14 @@ namespace Workshop.Controllers
             return Ok(itemTypes);
         }
 
+        [HttpGet("services")]
+        public async Task<IActionResult> GetAllServices()
+        {
+            var services = await repository.GetAllServices();
+            List<ServiceReadDTO> serviceReadDTOs = mapper.Map<List<Service>, List<ServiceReadDTO>>(services);
+            return Ok(serviceReadDTOs);
+        }
+
         [HttpGet("orders")]
         public async Task<IActionResult> GetAllOrders()
         {
@@ -92,6 +108,48 @@ namespace Workshop.Controllers
             return Ok(clientDBReadDTO);
         }
 
+        [HttpPost("specialists")]
+        public async Task<IActionResult> CreateSpecialist([FromBody] SpecialistWriteDTO specialistDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            Specialist specialist = mapper.Map<Specialist>(specialistDTO);
+            //var specialistDB = await repository.GetSpecialistByModel(specialist);
+            var specialistDB = await repository.GetSpecialistById(specialist.Id);
+            if (specialistDB == null)
+            {
+                specialistDB.Id = Guid.NewGuid();
+                await repository.CreateSpecialist(specialist);
+                SpecialistReadDTO specialistReadDTO = mapper.Map<SpecialistReadDTO>(specialist);
+                return Ok(specialistReadDTO);
+            }
+            SpecialistReadDTO specialistDBReadDTO = mapper.Map<SpecialistReadDTO>(specialistDB);
+            return Ok(specialistDBReadDTO);
+        }
+
+        [HttpPost("services")]
+        public async Task<IActionResult> CreateService([FromBody] ServiceWriteDTO serviceDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            Service service = mapper.Map<Service>(serviceDTO);
+            //var serviceDB = await repository.GetServiceByModel(service);
+            var serviceDB = await repository.GetServiceById(service.Id);
+            if (serviceDB == null)
+            {
+                service.Id = Guid.NewGuid();
+                await repository.CreateService(service);
+                SpecialistReadDTO serviceReadDTO = mapper.Map<SpecialistReadDTO>(service);
+                return Ok(serviceReadDTO);
+            }
+            SpecialistReadDTO serviceDBReadDTO = mapper.Map<SpecialistReadDTO>(serviceDB);
+            return Ok(serviceDBReadDTO);
+        }
+
         [HttpPost("repairs")]
         public async Task<IActionResult> CreateRepair([FromBody] RepairWriteDTO repairDTO)
         {
@@ -108,7 +166,7 @@ namespace Workshop.Controllers
             var client = await repository.GetClientById(repair.Client.Id);
             if (client == null)
             {
-                        client = repair.Client;
+                client = repair.Client;
                 client.Id = Guid.NewGuid();
                 await repository.CreateClient(client);
             }
@@ -255,6 +313,32 @@ namespace Workshop.Controllers
             return Ok(clientReadDTO);
         }
 
+        [HttpPost("specialists/{id}")]
+        public async Task<IActionResult> UpdateSpecialist([FromBody] SpecialistWriteDTO specialistDTO, Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            Specialist specialist = mapper.Map<Specialist>(specialistDTO);
+            var updatedSpecialist = await repository.UpdateSpecialist(specialist);
+            SpecialistReadDTO specialistReadDTO = mapper.Map<SpecialistReadDTO>(updatedSpecialist);
+            return Ok(specialistReadDTO);
+        }
+
+        [HttpPost("services/{id}")]
+        public async Task<IActionResult> UpdateService([FromBody] SpecialistWriteDTO specialistDTO, Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            Specialist specialist = mapper.Map<Specialist>(specialistDTO);
+            var updatedSpecialist = await repository.UpdateSpecialist(specialist);
+            SpecialistReadDTO specialistReadDTO = mapper.Map<SpecialistReadDTO>(updatedSpecialist);
+            return Ok(specialistReadDTO);
+        }
+
         [HttpPost("repairs/{id}")]
         public async Task<IActionResult> UpdateRepair([FromBody] RepairWriteDTO repairDTO, Guid id)
         {
@@ -285,6 +369,20 @@ namespace Workshop.Controllers
         public async Task<IActionResult> DeleteClient(Guid id)
         {
             await repository.DeleteClient(id);
+            return Ok();
+        }
+
+        [HttpDelete("specialists/{id}")]
+        public async Task<IActionResult> DeleteSpecialist(Guid id)
+        {
+            await repository.DeleteSpecialist(id);
+            return Ok();
+        }
+
+        [HttpDelete("services/{id}")]
+        public async Task<IActionResult> DeleteService(Guid id)
+        {
+            await repository.DeleteService(id);
             return Ok();
         }
 

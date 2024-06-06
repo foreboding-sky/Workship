@@ -9,7 +9,7 @@ namespace Workshop.Models
         [JsonPropertyName("user")]
         public string? User { get; set; } //user who created the repair entry
         [JsonPropertyName("specialist")]
-        public string? Specialist { get; set; } //whoever is doing the repair
+        public SpecialistWriteDTO? Specialist { get; set; } //whoever is doing the repair
         [JsonPropertyName("client")]
         public ClientWriteDTO? Client { get; set; }
         [JsonPropertyName("device")]
@@ -20,7 +20,8 @@ namespace Workshop.Models
         public List<StockItemWriteDTO>? Products { get; set; } //Many to Many relationship
         [JsonPropertyName("orderedProducts")]
         public List<OrderWriteDTO>? OrderedProducts { get; set; }
-        //public List<ServiceReadDTO>? RepairServices { get; set; }
+        [JsonPropertyName("repairServices")]
+        public List<ServiceWriteDTO>? RepairServices { get; set; }//Many to Many relationship
         [JsonPropertyName("comment")]
         public string? Comment { get; set; }
         [JsonPropertyName("discount")]
