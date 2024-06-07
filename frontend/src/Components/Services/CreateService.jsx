@@ -1,26 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Table, Button, Form, Input, DatePicker } from 'antd';
+import { useNavigate } from "react-router-dom";
+import { Button, Form, Input, InputNumber } from 'antd';
 import axios from 'axios';
 
 const { TextArea } = Input;
 
 const CreateServicePage = () => {
 
+    const navigate = useNavigate();
+
     const onSubmit = (values) => {
-        console.log({ values });
-    }
+        const request = {
+            Name: values.name,
+            price: values.price
+        }
+        console.log(request);
+        axios.defaults.baseURL = "http://localhost:5000/";
+        axios.post("api/Workshop/services", request).then(res => console.log({ res }));
+        return navigate("/services");
+    };
 
     return (
-        <div>
-            <Form layout="horizontal" labelCol={{ span: 8 }} style={{ maxWidth: 500, margin: '10px 0' }} onFinish={onSubmit}>
+        <div style={{ width: "100%" }}>
+            <Form layout="horizontal" labelCol={{ span: 4 }} style={{ maxWidth: 500, margin: '10px 0' }} onFinish={onSubmit}>
                 <Form.Item name="name" label="Name">
                     <Input />
                 </Form.Item>
-                <Form.Item name="price" label="Price">
-                    <Input />
+                <Form.Item name="price"
+                    label="Price"
+                    rules={[{ required: true, message: 'Please input price of provided service!' }]}
+                >
+                    <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
-                <Form.Item name="date" >
+                <Form.Item name="submit" >
                     <Button Type="primary" htmlType='submit' style={{ width: "50%" }}>
                         Submit
                     </Button>

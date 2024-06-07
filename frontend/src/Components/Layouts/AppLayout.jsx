@@ -10,6 +10,8 @@ const AppLayout = ({ children }) => {
         { label: <Link to='/orders'>Orders</Link>, key: '2' },
         { label: <Link to='/storage'>Storage</Link>, key: '3' },
         { label: <Link to='/clients'>Clients</Link>, key: '4' },
+        { label: <Link to='/specialists'>Specialists</Link>, key: '5' },
+        { label: <Link to='/services'>Services</Link>, key: '6' },
     ]
 
     return (

@@ -51,7 +51,7 @@ namespace Workshop.Profiles
                 .ForMember(dst => dst.Specialist, src => src.MapFrom(src => src.Specialist))
                 .ForMember(dst => dst.Products, src => src.MapFrom(src => src.Products.Select(x => x.Item).ToList()))
                 .ForMember(dst => dst.OrderedProducts, src => src.MapFrom(src => src.OrderedProducts))
-                .ForMember(dst => dst.RepairServices, src => src.MapFrom(src => src.RepairServices))
+                .ForMember(dst => dst.RepairServices, src => src.MapFrom(src => src.RepairServices.Select(x => x.Service).ToList()))
                 .ForMember(dst => dst.Device, src => src.MapFrom(src => src.Device));
         }
     }

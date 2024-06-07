@@ -7,11 +7,34 @@ const { Column, ColumnGroup } = Table;
 
 const ServicesPage = () => {
 
+    useEffect(() => {
+        fetchData();
+    }, [])
+
     const [array, setArray] = useState([]);
 
+    const fetchData = async () => {
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            const services = await axios.get("api/Workshop/services");
+            setArray(services.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
-    const DeleteService = (record) => {
-        //delete
+
+    const DeleteService = async (record) => {
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            console.log(record);
+            await axios.delete("api/Workshop/services/" + record.id);
+            const newArray = array.filter(item => item.id !== record.id);
+            console.log(newArray);
+            setArray(newArray);
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
     };
 
     let navigate = useNavigate();

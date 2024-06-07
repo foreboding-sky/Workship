@@ -4,7 +4,6 @@ namespace Workshop.Models
     {
         public Guid Id { get; set; }
         public string? FullName { get; set; }
-        public double? Comment { get; set; }
-
+        public string? Comment { get; set; }
     }
 }

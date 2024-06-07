@@ -219,10 +219,6 @@ const CreateRepairPage = () => {
                 <Form.Item name="complaint" label="Complaint">
                     <Input />
                 </Form.Item>
-                {/* List of products should be here
-                <Form.Item name="comment" label="Products">
-                    <TextArea rows={4} />
-                </Form.Item> */}
                 <p>Add Products</p>
                 <Form.List name="products">
                     {(fields, { add, remove }) => (

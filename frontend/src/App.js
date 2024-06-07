@@ -9,6 +9,11 @@ import AppLayout from './Components/Layouts/AppLayout';
 import ClientsPage from './Components/Clients/ClientsPage';
 import StoragePage from './Components/Storage/StoragePage';
 import CreateClient from './Components/Clients/CreateClient';
+import SpecialistsPage from './Components/Specialists/SpecialistsPage';
+import CreateSpecialist from './Components/Specialists/CreateSpecialist';
+import ServicesPage from './Components/Services/ServicesPage';
+import CreateService from './Components/Services/CreateService';
+import EditClient from './Components/Clients/EditClient';
 
 function App() {
   return (
@@ -22,7 +27,12 @@ function App() {
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/orders/create" element={<CreateOrder />} />
             <Route path="/clients" element={<ClientsPage />} />
+            <Route path='/clients/edit/:clientId' element={<EditClient />} />
             <Route path="/clients/create" element={<CreateClient />} />
+            <Route path="/specialists" element={<SpecialistsPage />} />
+            <Route path="/specialists/create" element={<CreateSpecialist />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/services/create" element={<CreateService />} />
             <Route path="/storage" element={<StoragePage />} />
             <Route path="*" element={<Navigate to="/workshop" />} />
           </Routes>

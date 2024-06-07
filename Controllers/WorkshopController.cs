@@ -19,6 +19,14 @@ namespace Workshop.Controllers
             this.mapper = mapper;
         }
 
+        [HttpGet("clients/{id}")]
+        public async Task<IActionResult> GetClientById(Guid id)
+        {
+            var client = await repository.GetClientById(id);
+            ClientReadDTO clientReadDTO = mapper.Map<Client, ClientReadDTO>(client);
+            return Ok(clientReadDTO);
+        }
+
         [HttpGet("clients")]
         public async Task<IActionResult> GetAllClients()
         {
@@ -120,7 +128,7 @@ namespace Workshop.Controllers
             var specialistDB = await repository.GetSpecialistById(specialist.Id);
             if (specialistDB == null)
             {
-                specialistDB.Id = Guid.NewGuid();
+                specialist.Id = Guid.NewGuid();
                 await repository.CreateSpecialist(specialist);
                 SpecialistReadDTO specialistReadDTO = mapper.Map<SpecialistReadDTO>(specialist);
                 return Ok(specialistReadDTO);
