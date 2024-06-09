@@ -47,6 +47,7 @@ namespace Workshop.Data
         public Task<Item> GetItemById(Guid id);
         public Task<Item> GetItemByModel(Item item);
         public Task<List<string>> GetAllItemTypes();
+        public Task<Service> UpdateService(Service service);
         //item
         public Task<Service> CreateService(Service service);
         public Task DeleteService(Guid id);

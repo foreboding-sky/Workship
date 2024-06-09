@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Table, Button } from 'antd';
 import axios from 'axios';
 
@@ -10,6 +10,7 @@ const SpecialistsPage = () => {
         fetchData();
     }, [])
 
+    const navigate = useNavigate();
     const [array, setArray] = useState([]);
 
     const fetchData = async () => {
@@ -35,6 +36,10 @@ const SpecialistsPage = () => {
         }
     };
 
+    const EditSpecialist = async (record) => {
+        return navigate(`/specialists/edit/${record.id}`);
+    };
+
     const columns = [
         {
             title: "Full Name",
@@ -47,6 +52,16 @@ const SpecialistsPage = () => {
             dataIndex: "comment",
             key: "comment",
             render: comment => comment
+        },
+        {
+            title: "Edit",
+            dataIndex: "edit",
+            key: "edit",
+            render: (_, record) => {
+                return (<Button type="primary" block onClick={() => EditSpecialist(record)}>
+                    Edit
+                </Button>)
+            }
         },
         {
             title: "Delete",

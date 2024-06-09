@@ -68,7 +68,9 @@ const CreateRepairPage = () => {
     const onSubmit = (values) => {
         const request = {
             user: '',
-            specialist: values.specialist,
+            specialist: {
+                fullName: values.specialist
+            },
             client: {
                 id: values.client,
                 phone: values.phone.toString()
@@ -150,6 +152,10 @@ const CreateRepairPage = () => {
 
     const filterOption = (input, option) =>
         (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+
+    const NavBack = () => {
+        return navigate("/workshop");
+    };
 
     useEffect(() => {
         fetchData();
@@ -323,11 +329,18 @@ const CreateRepairPage = () => {
                 <Form.Item name="comment" label="Comment">
                     <TextArea rows={4} />
                 </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType='submit' style={{ width: "50%" }}>
-                        Submit
-                    </Button>
-                </Form.Item>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '10px' }}>
+                    <Form.Item>
+                        <Button type="primary" htmlType='submit' style={{ width: "100%" }}>
+                            Submit
+                        </Button>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" block style={{ width: "100%", backgroundColor: '#d9534f', color: 'white' }} onClick={() => NavBack()}>
+                            Cancel
+                        </Button>
+                    </Form.Item>
+                </div>
             </Form>
         </div>
     );

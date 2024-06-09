@@ -21,6 +21,10 @@ const CreateClientPage = () => {
         return navigate("/clients");
     };
 
+    const NavBack = () => {
+        return navigate("/clients");
+    };
+
     return (
         <div style={{ width: "100%" }}>
             <Form layout="horizontal" labelCol={{ span: 4 }} style={{ width: "100%", maxWidth: 500, margin: '10px 0' }} onFinish={onSubmit}>
@@ -37,11 +41,18 @@ const CreateClientPage = () => {
                 <Form.Item name="comment" label="Comment">
                     <TextArea rows={4} />
                 </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType='submit' style={{ width: "50%" }}>
-                        Submit
-                    </Button>
-                </Form.Item>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '10px' }}>
+                    <Form.Item>
+                        <Button type="primary" htmlType='submit' style={{ width: "100%" }}>
+                            Submit
+                        </Button>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" block style={{ width: "100%", backgroundColor: '#d9534f', color: 'white' }} onClick={() => NavBack()}>
+                            Cancel
+                        </Button>
+                    </Form.Item>
+                </div>
             </Form>
         </div>
     );

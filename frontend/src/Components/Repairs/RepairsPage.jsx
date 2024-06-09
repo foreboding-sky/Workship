@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Space, Table, Button, Tag } from 'antd';
 import axios from 'axios';
 
@@ -8,6 +8,7 @@ const { Column, ColumnGroup } = Table;
 const RepairsPage = () => {
 
     const [array, setArray] = useState([]);
+    let navigate = useNavigate();
 
     const fetchData = async () => {
         try {
@@ -23,8 +24,8 @@ const RepairsPage = () => {
         fetchData();
     }, [])
 
-    const EditRepair = (record) => {
-        //edit repair here and post it to api
+    const EditRepair = async (record) => {
+        return navigate(`/workshop/edit/${record.id}`);
     };
 
     const DeleteRepair = async (record) => {
@@ -39,6 +40,7 @@ const RepairsPage = () => {
             console.error('Error deleting data:', error);
         }
     };
+
 
     const columns = [
         // {
@@ -83,7 +85,7 @@ const RepairsPage = () => {
             dataIndex: "edit",
             key: "edit",
             render: (_, record) => {
-                return (<Button type="primary" block>
+                return (<Button type="primary" block onClick={() => EditRepair(record)}>
                     <Link to='/workshop/edit'>Edit</Link>
                 </Button>)
             }

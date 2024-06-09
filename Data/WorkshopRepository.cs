@@ -476,6 +476,20 @@ namespace Workshop.Data
             return repairDB;
         }
 
+        public async Task<Service> UpdateService(Service service)
+        {
+            var serviceDB = await GetServiceById(service.Id);
+            if (serviceDB == null)
+                serviceDB = await GetServiceByModel(service);
+            if (serviceDB == null)
+                return null;
+
+            serviceDB.Name = service.Name;
+            serviceDB.Price = service.Price;
+            await context.SaveChangesAsync();
+            return serviceDB;
+        }
+
         public async Task<Specialist> UpdateSpecialist(Specialist specialist)
         {
             var specialisttDB = await GetSpecialistById(specialist.Id);
@@ -484,8 +498,8 @@ namespace Workshop.Data
             if (specialisttDB == null)
                 return null;
 
-            specialisttDB.FullName = specialisttDB.FullName;
-            specialisttDB.Comment = specialisttDB.Comment;
+            specialisttDB.FullName = specialist.FullName;
+            specialisttDB.Comment = specialist.Comment;
             await context.SaveChangesAsync();
             return specialisttDB;
         }

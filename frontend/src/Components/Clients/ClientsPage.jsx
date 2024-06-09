@@ -7,16 +7,23 @@ const { Column, ColumnGroup } = Table;
 
 const ClientsPage = () => {
     useEffect(() => {
-        console.log("useEffect on ClientsPage");
-        axios.get("api/Workshop/clients").then(res => {
-            setArray(res.data);
-            console.log(res.data);
-        })
+        fetchData();
     }, [])
 
     const [array, setArray] = useState([]);
 
     const navigate = useNavigate();
+
+    const fetchData = async () => {
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            const clients = await axios.get("api/Workshop/clients");
+            setArray(clients.data);
+            console.log(clients.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
     const DeleteClient = async (record) => {
         try {
@@ -79,7 +86,7 @@ const ClientsPage = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'start', width: '100%' }}>
                 <Button type="primary" style={{ margin: '10px 0' }}>
-                    <Link to='/clients/create'>Add new customer</Link>
+                    <Link to='/clients/create'>Add new client</Link>
                 </Button>
             </div>
             <Table dataSource={array} columns={columns} rowKey="id" />

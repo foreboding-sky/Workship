@@ -8,6 +8,8 @@ const { Column, ColumnGroup } = Table;
 const StoragePage = () => {
     const [array, setArray] = useState([]);
 
+    let navigate = useNavigate();
+
     const fetchData = async () => {
         try {
             axios.defaults.baseURL = "http://localhost:5000/";
@@ -23,7 +25,7 @@ const StoragePage = () => {
         fetchData();
     }, [])
 
-    const DeleteRepair = async (record) => {
+    const DeleteItem = async (record) => {
         try {
             axios.defaults.baseURL = "http://localhost:5000/";
             console.log(record);
@@ -34,6 +36,10 @@ const StoragePage = () => {
         } catch (error) {
             console.error('Error deleting data:', error);
         }
+    };
+
+    const EditItem = async (record) => {
+        return navigate(`/storage/edit/${record.id}`);
     };
 
     const columns = [
@@ -74,11 +80,21 @@ const StoragePage = () => {
             render: quantity => quantity
         },
         {
+            title: "Edit",
+            dataIndex: "edit",
+            key: "edit",
+            render: (_, record) => {
+                return (<Button type="primary" block onClick={() => EditItem(record)}>
+                    Edit
+                </Button>)
+            }
+        },
+        {
             title: "Delete",
             dataIndex: "delete",
             key: "delete",
             render: (_, record) => {
-                return (<Button type="primary" block onClick={() => DeleteRepair(record)}>
+                return (<Button type="primary" block onClick={() => DeleteItem(record)}>
                     Delete
                 </Button>)
             }
@@ -88,7 +104,7 @@ const StoragePage = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'start', width: '100%' }}>
                 <Button type="primary" style={{ margin: '10px 0' }}>
-                    <Link to='/storage'>Add new product</Link> {/*TODO HERE */}
+                    <Link to='/storage/create'>Add new product</Link>
                 </Button>
             </div>
             <Table dataSource={array} columns={columns} rowKey="id" />

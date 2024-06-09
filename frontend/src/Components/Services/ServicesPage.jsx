@@ -6,6 +6,7 @@ import axios from 'axios';
 const { Column, ColumnGroup } = Table;
 
 const ServicesPage = () => {
+    let navigate = useNavigate();
 
     useEffect(() => {
         fetchData();
@@ -37,7 +38,45 @@ const ServicesPage = () => {
         }
     };
 
-    let navigate = useNavigate();
+    const EditService = async (record) => {
+        return navigate(`/services/edit/${record.id}`);
+    };
+
+
+    const columns = [
+        {
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+            render: name => name
+        },
+        {
+            title: "Price",
+            dataIndex: "price",
+            key: "price",
+            render: price => price
+        },
+        {
+            title: "Edit",
+            dataIndex: "edit",
+            key: "edit",
+            render: (_, record) => {
+                return (<Button type="primary" block onClick={() => EditService(record)}>
+                    Edit
+                </Button>)
+            }
+        },
+        {
+            title: "Delete",
+            dataIndex: "delete",
+            key: "delete",
+            render: (_, record) => {
+                return (<Button type="primary" block onClick={() => DeleteService(record)}>
+                    Delete
+                </Button>)
+            }
+        }
+    ]
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'start', width: '100%' }}>
@@ -45,20 +84,7 @@ const ServicesPage = () => {
                     <Link to='/services/create'>Add new service</Link>
                 </Button>
             </div>
-            <Table dataSource={array} rowKey="id">
-                <Column title="Name" dataIndex="name" key="name" />
-                <Column title="Price" dataIndex="price" key="price" />
-                <Column
-                    title="Delete"
-                    key="action"
-                    width={"200px"}
-                    render={(_, record) => {
-                        console.log(record.product);
-                        return (<Button type="primary" block onClick={() => DeleteService(record)}>
-                            Delete
-                        </Button>)
-                    }} />
-            </Table >
+            <Table dataSource={array} columns={columns} rowKey="id" />
         </div>
     );
 }

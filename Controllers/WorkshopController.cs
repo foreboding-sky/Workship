@@ -35,6 +35,14 @@ namespace Workshop.Controllers
             return Ok(clientsReadDTOs);
         }
 
+        [HttpGet("specialists/{id}")]
+        public async Task<IActionResult> GetsSpecialistById(Guid id)
+        {
+            var specialist = await repository.GetSpecialistById(id);
+            SpecialistReadDTO specialistReadDTO = mapper.Map<Specialist, SpecialistReadDTO>(specialist);
+            return Ok(specialistReadDTO);
+        }
+
         [HttpGet("specialists")]
         public async Task<IActionResult> GetAllSpecialists()
         {
@@ -50,6 +58,14 @@ namespace Workshop.Controllers
             return Ok(deviceTypes);
         }
 
+        [HttpGet("repairs/{id}")]
+        public async Task<IActionResult> GetRepairById(Guid id)
+        {
+            var repair = await repository.GetRepairById(id);
+            RepairReadDTO repairReadDTO = mapper.Map<Repair, RepairReadDTO>(repair);
+            return Ok(repairReadDTO);
+        }
+
         [HttpGet("repairs")]
         public async Task<IActionResult> GetAllRepairs()
         {
@@ -62,6 +78,14 @@ namespace Workshop.Controllers
         {
             var repairStatuses = await repository.GetAllRepairStatuses();
             return Ok(repairStatuses);
+        }
+
+        [HttpGet("stock/{id}")]
+        public async Task<IActionResult> GetStockItemById(Guid id)
+        {
+            var stockItem = await repository.GetStockItemById(id);
+            StockItemReadDTO stockItemReadDTO = mapper.Map<StockItem, StockItemReadDTO>(stockItem);
+            return Ok(stockItemReadDTO);
         }
 
         [HttpGet("stock")]
@@ -79,12 +103,28 @@ namespace Workshop.Controllers
             return Ok(itemTypes);
         }
 
+        [HttpGet("services/{id}")]
+        public async Task<IActionResult> GetServiceById(Guid id)
+        {
+            var service = await repository.GetServiceById(id);
+            ServiceReadDTO serviceReadDTO = mapper.Map<Service, ServiceReadDTO>(service);
+            return Ok(serviceReadDTO);
+        }
+
         [HttpGet("services")]
         public async Task<IActionResult> GetAllServices()
         {
             var services = await repository.GetAllServices();
             List<ServiceReadDTO> serviceReadDTOs = mapper.Map<List<Service>, List<ServiceReadDTO>>(services);
             return Ok(serviceReadDTOs);
+        }
+
+        [HttpGet("orders/{id}")]
+        public async Task<IActionResult> GetOrderById(Guid id)
+        {
+            var order = await repository.GetOrderById(id);
+            OrderReadDTO orderReadDTO = mapper.Map<Order, OrderReadDTO>(order);
+            return Ok(orderReadDTO);
         }
 
         [HttpGet("orders")]
@@ -335,16 +375,16 @@ namespace Workshop.Controllers
         }
 
         [HttpPost("services/{id}")]
-        public async Task<IActionResult> UpdateService([FromBody] SpecialistWriteDTO specialistDTO, Guid id)
+        public async Task<IActionResult> UpdateService([FromBody] ServiceWriteDTO serviceDTO, Guid id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            Specialist specialist = mapper.Map<Specialist>(specialistDTO);
-            var updatedSpecialist = await repository.UpdateSpecialist(specialist);
-            SpecialistReadDTO specialistReadDTO = mapper.Map<SpecialistReadDTO>(updatedSpecialist);
-            return Ok(specialistReadDTO);
+            Service service = mapper.Map<Service>(serviceDTO);
+            var updatedService = await repository.UpdateService(service);
+            ServiceReadDTO serviceReadDTO = mapper.Map<ServiceReadDTO>(updatedService);
+            return Ok(serviceReadDTO);
         }
 
         [HttpPost("repairs/{id}")]

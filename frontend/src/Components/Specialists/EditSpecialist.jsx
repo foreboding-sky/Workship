@@ -5,28 +5,27 @@ import axios from 'axios';
 
 const { TextArea } = Input;
 
-const EditClientPage = () => {
+const EditSpecialistPage = () => {
 
     const navigate = useNavigate();
     const [form] = Form.useForm(); // Define form instance
-    let { clientId } = useParams();
+    let { specialistId } = useParams();
 
     useEffect(() => {
-        if (clientId)
+        if (specialistId)
             fetchData();
-    }, [clientId])
+    }, [specialistId])
 
-    const [client, setClient] = useState({});
+    const [specialist, setSpecialist] = useState({}); //just in case needed in future
 
     const fetchData = async () => {
         try {
             axios.defaults.baseURL = "http://localhost:5000/";
-            const clientDB = await axios.get("api/Workshop/clients/" + clientId);
-            setClient(clientDB.data);
+            const specialistDB = await axios.get("api/Workshop/specialists/" + specialistId);
+            setSpecialist(specialistDB.data);
             form.setFieldsValue({
-                fullName: clientDB.data.fullName,
-                phone: clientDB.data.phone,
-                comment: clientDB.data.comment
+                full_name: specialistDB.data.fullName,
+                comment: specialistDB.data.comment
             });
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -35,33 +34,26 @@ const EditClientPage = () => {
 
     const onSubmit = (values) => {
         const request = {
-            id: clientId,
-            fullName: values.fullName,
-            phone: values.phone.toString(),
+            id: specialistId,
+            fullName: values.full_name,
             comment: values.comment
         }
         console.log(request);
         axios.defaults.baseURL = "http://localhost:5000/";
-        axios.post("api/Workshop/clients/" + clientId, request).then(res => console.log({ res }));
-        return navigate("/clients");
+        axios.post("api/Workshop/specialists/" + specialistId, request).then(res => console.log({ res }));
+        return navigate("/specialists");
     };
 
     const NavBack = () => {
-        return navigate("/clients");
+        return navigate("/specialists");
     };
 
     return (
         <div style={{ width: "100%" }}>
             <Form form={form} layout="horizontal" labelCol={{ span: 4 }} style={{ width: "100%", maxWidth: 500, margin: '10px 0' }} onFinish={onSubmit}>
-                <Form.Item name="fullName" label="Full Name"
-                    rules={[{ required: true, message: 'Please input clients full name!' }]}>
+                <Form.Item name="full_name" label="Full Name"
+                    rules={[{ required: true, message: "Please input specialist's full name!" }]}>
                     <Input />
-                </Form.Item>
-                <Form.Item name="phone"
-                    label="Phone"
-                    rules={[{ required: true, message: 'Please input your phone number!' }]}
-                >
-                    <InputNumber maxLength={12} style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item name="comment" label="Comment">
                     <TextArea rows={4} />
@@ -83,4 +75,4 @@ const EditClientPage = () => {
     );
 }
 
-export default EditClientPage;
+export default EditSpecialistPage;
