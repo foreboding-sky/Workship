@@ -59,20 +59,23 @@ const CreateRepairPage = () => {
         if (selectedStockItem) {
             const productType = selectedStockItem.item.type;
             const productPrice = selectedStockItem.price;
+            const productId = selectedStockItem.id;
             const { products } = form.getFieldsValue();
-            Object.assign(products[key], { product_type: productType, product_price: productPrice, product_quantity: 1 })
+            Object.assign(products[key], { product_type: productType, product_price: productPrice, product_id: productId })
             form.setFieldsValue({ products })
         }
     };
 
     const onSubmit = (values) => {
+        console.log(values);
         const request = {
             user: '',
             specialist: {
                 fullName: values.specialist
             },
             client: {
-                id: values.client,
+                id: values.client.key,
+                fullName: values.client.label,
                 phone: values.phone.toString()
             },
             device: {
@@ -83,6 +86,7 @@ const CreateRepairPage = () => {
             complaint: values.complaint,
             products: values.products ? values.products.map(p => {
                 return {
+                    id: p.product_id,
                     item: {
                         title: p.product_title,
                         type: p.product_type,
@@ -92,12 +96,12 @@ const CreateRepairPage = () => {
                             model: values.device_model
                         },
                     },
-                    price: p.product_price,
-                    quantity: p.product_quantity
+                    price: p.product_price
                 }
             }) : [],
             orderedProducts: values.ordered_products ? values.ordered_products.map(p => {
                 return {
+                    id: p.ordered_product_id,
                     item: {
                         title: p.ordered_product_title,
                         type: p.ordered_product_type,
@@ -147,7 +151,13 @@ const CreateRepairPage = () => {
     const handleClientSelect = (clientId) => {
         const selectedClient = clients.find(client => client.id === clientId);
         if (selectedClient)
-            form.setFieldsValue({ phone: selectedClient.phone });
+            form.setFieldsValue({
+                client: {
+                    label: selectedClient.fullName, // Set client full name
+                    key: selectedClient.id // Set client id
+                },
+                phone: selectedClient.phone
+            });
     };
 
     const filterOption = (input, option) =>
@@ -199,6 +209,7 @@ const CreateRepairPage = () => {
                         options={clients.map((client) => ({
                             label: client.fullName,
                             value: client.id,
+                            key: client.id
                         }))}
                         onChange={handleClientSelect}
                     />
@@ -236,7 +247,7 @@ const CreateRepairPage = () => {
                                         alignItems: "center", gap: "5px", height: "fit-content", width: "100%"
                                     }}>
                                     <div style={{
-                                        display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
+                                        display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
                                     }}>
                                         <Form.Item {...restField} name={[name, "product_type"]} style={{ margin: "0 5px 0 0" }} rules={fields.length > 0 ? [{ required: true, message: 'Item type is required' }] : []}>
@@ -263,11 +274,11 @@ const CreateRepairPage = () => {
                                                         })}
                                             </Select>
                                         </Form.Item>
-                                        <Form.Item {...restField} name={[name, "product_quantity"]} style={{ margin: "0 5px 0 0" }}>
-                                            <Input placeholder="Product Quantity" />
-                                        </Form.Item>
                                         <Form.Item {...restField} name={[name, "product_price"]}>
                                             <Input placeholder="Product Price" />
+                                        </Form.Item>
+                                        <Form.Item {...restField} name={[name, 'product_id']} style={{ display: 'none' }} >
+                                            <Input />
                                         </Form.Item>
                                     </div>
                                     <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
@@ -313,6 +324,9 @@ const CreateRepairPage = () => {
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, "ordered_product_estimated_date"]}>
                                             <DatePicker placeholder="Estimated date" />
+                                        </Form.Item>
+                                        <Form.Item {...restField} name={[name, 'ordered_product_id']} style={{ display: 'none' }} >
+                                            <Input />
                                         </Form.Item>
                                     </div>
                                     <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />

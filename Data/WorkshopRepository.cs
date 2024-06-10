@@ -407,7 +407,10 @@ namespace Workshop.Data
             List<StockItem> itemsToAddDB = new List<StockItem>();
             foreach (var repairItem in itemsToAdd)
             {
-                itemsToAddDB.Add(context.Stock.Find(repairItem.Item.Id));
+                var item = await GetStockItemById(repairItem.Item.Id);
+                // if (item == null)
+                //     item = await GetStockItemByModel(repairItem.Item);
+                itemsToAddDB.Add(item);
             }
 
             foreach (var item in itemsToRemove)
@@ -417,10 +420,10 @@ namespace Workshop.Data
                 repairDB.Products.Add(new RepairItem() { Item = item });
 
             //Ordered products update
-            var existingOrders = repairDB.OrderedProducts.ToList();
-            var selectedOrders = repair.OrderedProducts.ToList();
-            var ordersToAdd = selectedOrders.Except(existingOrders, new OrderComparer()).ToList();
-            var ordersToRemove = existingOrders.Except(selectedOrders, new OrderComparer()).ToList();
+            var existingOrders = repairDB.OrderedProducts?.ToList();
+            var selectedOrders = repair.OrderedProducts?.ToList();
+            var ordersToAdd = selectedOrders?.Except(existingOrders, new OrderComparer()).ToList(); //TODO NULL REFERENES
+            var ordersToRemove = existingOrders?.Except(selectedOrders, new OrderComparer()).ToList(); //TODO NULL REFERENES
 
             foreach (var item in ordersToRemove)
                 repairDB.OrderedProducts.Remove(item);
@@ -429,10 +432,10 @@ namespace Workshop.Data
                 repairDB.OrderedProducts.Add(item);
 
             //Services update
-            var existingServices = repairDB.RepairServices.ToList();
-            var selectedServices = repair.RepairServices.ToList();
-            var servicesToAdd = selectedServices.Except(existingServices, new RepairServiceComparer()).ToList();
-            var servicesToRemove = existingServices.Except(selectedServices, new RepairServiceComparer()).ToList();
+            var existingServices = repairDB.RepairServices?.ToList();
+            var selectedServices = repair.RepairServices?.ToList();
+            var servicesToAdd = selectedServices?.Except(existingServices, new RepairServiceComparer()).ToList(); //TODO NULL REFERENES
+            var servicesToRemove = existingServices?.Except(selectedServices, new RepairServiceComparer()).ToList(); //TODO NULL REFERENES
             List<Service> ServicesToAddDB = new List<Service>();
             foreach (var repairService in servicesToAdd)
             {

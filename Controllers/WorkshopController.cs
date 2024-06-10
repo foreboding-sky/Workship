@@ -219,8 +219,10 @@ namespace Workshop.Controllers
                 await repository.CreateClient(client);
             }
 
-            //var device = await repository.GetDeviceByModel(repair.Device);
+
             var device = await repository.GetDeviceById(repair.Device.Id);
+            if (device == null)
+                device = await repository.GetDeviceByModel(repair.Device);
             if (device == null)
             {
                 device = repair.Device;
@@ -232,8 +234,9 @@ namespace Workshop.Controllers
             List<RepairItem> repairItemsDB = new List<RepairItem>();
             foreach (var product in repair.Products)
             {
-                //var itemDB = await repository.GetStockItemByModel(product.Item);
-                var itemDB = await repository.GetStockItemByItemId(product.Item.Item.Id);
+                var itemDB = await repository.GetStockItemById(product.Item.Id);
+                if (itemDB == null)
+                    itemDB = await repository.GetStockItemByModel(product.Item);
                 if (itemDB == null)
                     continue; //item won't add if there are no entries of such item in database
                 var repairItem = await repository.CreateRepairItem(new RepairItem { Item = itemDB });
