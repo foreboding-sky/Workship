@@ -207,59 +207,8 @@ namespace Workshop.Controllers
                 return BadRequest();
             }
             Repair repair = mapper.Map<Repair>(repairDTO);
-
-            repair.Id = Guid.NewGuid(); //no need to check if repair entry already exist, always create new one
-
-            //var client = await repository.GetClientByModel(repair.Client);
-            var client = await repository.GetClientById(repair.Client.Id);
-            if (client == null)
-            {
-                client = repair.Client;
-                client.Id = Guid.NewGuid();
-                await repository.CreateClient(client);
-            }
-
-
-            var device = await repository.GetDeviceById(repair.Device.Id);
-            if (device == null)
-                device = await repository.GetDeviceByModel(repair.Device);
-            if (device == null)
-            {
-                device = repair.Device;
-                device.Id = Guid.NewGuid();
-                await repository.CreateDevice(device);
-            }
-
-            //TODO check for repair items
-            List<RepairItem> repairItemsDB = new List<RepairItem>();
-            foreach (var product in repair.Products)
-            {
-                var itemDB = await repository.GetStockItemById(product.Item.Id);
-                if (itemDB == null)
-                    itemDB = await repository.GetStockItemByModel(product.Item);
-                if (itemDB == null)
-                    continue; //item won't add if there are no entries of such item in database
-                var repairItem = await repository.CreateRepairItem(new RepairItem { Item = itemDB });
-                repairItemsDB.Add(repairItem);
-            }
-
-            //TODO check for orders
-            List<Order> ordersDB = new List<Order>();
-            foreach (var order in repair.OrderedProducts)
-            {
-                order.Id = Guid.NewGuid();
-                order.Repair = repair;
-                //order.Product = await repository.GetItemByModel(order.Product);
-                order.Product = await repository.GetItemById(order.Id);
-                ordersDB.Add(order);
-            }
-
-            repair.Products = repairItemsDB;
-            repair.OrderedProducts = ordersDB;
-            repair.Device = device;
-            repair.Client = client;
-            await repository.CreateRepair(repair);
-            RepairReadDTO repairReadDTO = mapper.Map<RepairReadDTO>(repair);
+            var repairDB = await repository.CreateRepair(repair);
+            RepairReadDTO repairReadDTO = mapper.Map<RepairReadDTO>(repairDB);
             return Ok(repairReadDTO);
         }
 

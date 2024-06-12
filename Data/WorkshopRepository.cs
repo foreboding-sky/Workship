@@ -4,6 +4,7 @@ using SQLitePCL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Workshop.Models;
 
@@ -47,6 +48,138 @@ namespace Workshop.Data
 
         public async Task<Repair> CreateRepair(Repair repair)
         {
+            repair.Id = Guid.NewGuid(); //no need to check if repair entry already exist, always create a new one
+
+            Client client;
+            if (repair.Client != null)
+            {
+                client = await GetClientById(repair.Client.Id);
+                if (client == null)
+                {
+                    client = new Client
+                    {
+                        FullName = repair.Client.FullName,
+                        Phone = repair.Client.Phone,
+                        Comment = repair.Client.Comment,
+                        Id = Guid.NewGuid()
+                    };
+                    var clitntDB = await CreateClient(client);
+                    repair.Client = clitntDB;
+                }
+                repair.Client = client;
+            }
+
+            Specialist specialist;
+            if (repair.Specialist != null)
+            {
+                specialist = await GetSpecialistById(repair.Specialist.Id);
+                if (specialist == null)
+                {
+                    specialist = new Specialist
+                    {
+                        FullName = repair.Specialist.FullName,
+                        Comment = repair.Specialist.Comment,
+                        Id = Guid.NewGuid()
+                    };
+                    var specialistDB = await CreateSpecialist(specialist);
+                    repair.Specialist = specialistDB;
+                }
+                repair.Specialist = specialist;
+            }
+
+            Device device;
+            if (repair.Device != null)
+            {
+                device = await GetDeviceById(repair.Device.Id);
+                if (device == null)
+                    device = await GetDeviceByModel(repair.Device);
+                if (device == null)
+                {
+                    device = new Device
+                    {
+                        Brand = repair.Device.Brand,
+                        Model = repair.Device.Model,
+                        Type = repair.Device.Type,
+                        Id = Guid.NewGuid()
+                    };
+                    var deviceDB = await CreateDevice(device);
+                    repair.Device = deviceDB;
+                }
+                repair.Device = device;
+            }
+
+            //check for services
+            List<RepairService> repairServicesDB = new List<RepairService>();
+            if (repair.RepairServices != null)
+            {
+                foreach (var service in repair.RepairServices)
+                {
+                    if (service.Service != null)
+                    {
+                        var serviceDB = await GetServiceById(service.Service.Id);
+                        if (serviceDB == null)
+                            serviceDB = await GetServiceByModel(service.Service);
+                        if (serviceDB == null)
+                            continue; //item won't add if there are no entries of such item in database
+                        var repairService = await CreateRepairService(new RepairService { Service = serviceDB });
+                        repairServicesDB.Add(repairService);
+                    }
+                }
+                repair.RepairServices = repairServicesDB;
+            }
+
+            //check for repair items
+            List<RepairItem> repairItemsDB = new List<RepairItem>();
+            if (repair.Products != null)
+            {
+                foreach (var product in repair.Products)
+                {
+                    if (product.Item != null)
+                    {
+                        var itemDB = await GetStockItemById(product.Item.Id);
+                        if (itemDB == null)
+                            itemDB = await GetStockItemByModel(product.Item);
+                        if (itemDB == null)
+                            continue; //item won't add if there are no entries of such item in database
+                        var repairItem = await CreateRepairItem(new RepairItem { Item = itemDB });
+                        repairItemsDB.Add(repairItem);
+                    }
+                }
+                repair.Products = repairItemsDB;
+            }
+
+            //check for orders
+            List<Order> ordersDB = new List<Order>();
+            if (repair.OrderedProducts != null)
+            {
+                Order orderDB;
+                foreach (var order in repair.OrderedProducts)
+                {
+                    if (order.Product != null)
+                    {
+                        orderDB = new Order
+                        {
+                            Id = Guid.NewGuid(),
+                            Repair = repair,
+                            DateOrdered = order.DateOrdered,
+                            DateEstimated = order.DateEstimated,
+                            DateRecieved = order.DateRecieved,
+                            Comment = order.Comment,
+                            Price = order.Price,
+                            IsProcessed = order.IsProcessed,
+                            Source = order.Source,
+                            Product = await GetItemById(order.Id)
+                        };
+                        if (orderDB.Product == null)
+                            orderDB.Product = await GetItemByModel(order.Product);
+                        if (orderDB.Product == null)
+                            orderDB.Product = new Item { Title = order.Product.Title, Type = order.Product.Type, Device = repair.Device };
+                        ordersDB.Add(orderDB);
+                    }
+                }
+                repair.OrderedProducts = ordersDB;
+            }
+
             context.Repairs.Add(repair);
             await context.SaveChangesAsync();
             return repair;
@@ -399,77 +532,100 @@ namespace Workshop.Data
             if (repairDB == null)
                 return null;
 
+            //Services update
+            var existingServices = repairDB.RepairServices?.ToList() ?? new List<RepairService>();
+            var selectedServices = repair.RepairServices?.ToList() ?? new List<RepairService>();
+            var servicesToAdd = selectedServices.Except(existingServices, new RepairServiceComparer()).ToList();
+            var servicesToRemove = existingServices.Except(selectedServices, new RepairServiceComparer()).ToList();
+            List<Service> ServicesToAddDB = new List<Service>();
+            foreach (var repairService in servicesToAdd)
+            {
+                if (repairService.Service?.Id != null)
+                {
+                    var service = context.Services.Find(repairService.Service.Id);
+                    if (service != null)
+                        ServicesToAddDB.Add(service);
+                }
+            }
+
+            foreach (var service in servicesToRemove)
+                repairDB.RepairServices?.Remove(service);
+
+            foreach (var service in ServicesToAddDB)
+                repairDB.RepairServices?.Add(new RepairService() { Service = service });
+
+
             //Products update
-            var existingItems = repairDB.Products.ToList();
-            var selectedItems = repair.Products.ToList();
+            var existingItems = repairDB.Products?.ToList() ?? new List<RepairItem>();
+            var selectedItems = repair.Products?.ToList() ?? new List<RepairItem>();
             var itemsToAdd = selectedItems.Except(existingItems, new RepairItemComparer()).ToList();
             var itemsToRemove = existingItems.Except(selectedItems, new RepairItemComparer()).ToList();
             List<StockItem> itemsToAddDB = new List<StockItem>();
             foreach (var repairItem in itemsToAdd)
             {
-                var item = await GetStockItemById(repairItem.Item.Id);
-                // if (item == null)
-                //     item = await GetStockItemByModel(repairItem.Item);
-                itemsToAddDB.Add(item);
+                if (repairItem.Item != null)
+                {
+                    var item = await GetStockItemById(repairItem.Item.Id);
+                    if (item != null)
+                        itemsToAddDB.Add(item);
+                }
             }
 
             foreach (var item in itemsToRemove)
-                repairDB.Products.Remove(item);
+                repairDB.Products?.Remove(item);
 
             foreach (var item in itemsToAddDB)
-                repairDB.Products.Add(new RepairItem() { Item = item });
+                repairDB.Products?.Add(new RepairItem() { Item = item });
 
             //Ordered products update
-            var existingOrders = repairDB.OrderedProducts?.ToList();
-            var selectedOrders = repair.OrderedProducts?.ToList();
-            var ordersToAdd = selectedOrders?.Except(existingOrders, new OrderComparer()).ToList(); //TODO NULL REFERENES
-            var ordersToRemove = existingOrders?.Except(selectedOrders, new OrderComparer()).ToList(); //TODO NULL REFERENES
+            var existingOrders = repairDB.OrderedProducts?.ToList() ?? new List<Order>();
+            var selectedOrders = repair.OrderedProducts?.ToList() ?? new List<Order>();
+            var ordersToAdd = selectedOrders.Except(existingOrders, new OrderComparer()).ToList();
+            var ordersToRemove = existingOrders.Except(selectedOrders, new OrderComparer()).ToList();
 
             foreach (var item in ordersToRemove)
-                repairDB.OrderedProducts.Remove(item);
+                repairDB.OrderedProducts?.Remove(item);
 
             foreach (var item in ordersToAdd)
-                repairDB.OrderedProducts.Add(item);
+                repairDB.OrderedProducts?.Add(item);
 
-            //Services update
-            var existingServices = repairDB.RepairServices?.ToList();
-            var selectedServices = repair.RepairServices?.ToList();
-            var servicesToAdd = selectedServices?.Except(existingServices, new RepairServiceComparer()).ToList(); //TODO NULL REFERENES
-            var servicesToRemove = existingServices?.Except(selectedServices, new RepairServiceComparer()).ToList(); //TODO NULL REFERENES
-            List<Service> ServicesToAddDB = new List<Service>();
-            foreach (var repairService in servicesToAdd)
+            //client update
+            if (repairDB.Client != null && repair.Client != null)
             {
-                ServicesToAddDB.Add(context.Services.Find(repairService.Service.Id));
+                if (repairDB.Client.Id != repair.Client.Id && repair.Client.Id != Guid.Empty)
+                {
+                    repairDB.Client.Id = repair.Client.Id;
+                    repairDB.Client = await UpdateClient(repair.Client);
+                }
+                else
+                    repairDB.Client = await UpdateClient(repair.Client);
             }
 
-            foreach (var service in servicesToRemove)
-                repairDB.RepairServices.Remove(service);
-
-            foreach (var service in ServicesToAddDB)
-                repairDB.RepairServices.Add(new RepairService() { Service = service });
-
-            if (repairDB.Client.Id != repair.Client.Id)
-                repairDB.Client = repair.Client;
-            else
+            //specialist update
+            if (repairDB.Specialist != null && repair.Specialist != null)
             {
-                repairDB.Client.FullName = repair.Client.FullName;
-                repairDB.Client.Phone = repair.Client.Phone;
-                repairDB.Client.Comment = repair.Client.Comment;
+                if (repairDB.Specialist.Id != repair.Specialist.Id && repair.Specialist.Id != Guid.Empty)
+                {
+                    repairDB.Specialist.Id = repair.Specialist.Id;
+                    repairDB.Specialist = await UpdateSpecialist(repair.Specialist);
+                }
+                else
+                    repairDB.Specialist = await UpdateSpecialist(repair.Specialist);
             }
 
-            if (repairDB.Specialist.Id != repair.Specialist.Id)
-                repairDB.Specialist = repair.Specialist;
-
-            if (repairDB.Device.Id != repair.Device.Id)
-                repairDB.Device = repair.Device;
-            else
+            //device update
+            if (repairDB.Device != null && repair.Device != null)
             {
-                repairDB.Device.Type = repair.Device.Type;
-                repairDB.Device.Model = repair.Device.Model;
-                repairDB.Device.Brand = repair.Device.Brand;
+                if (repairDB.Device.Id != repair.Device.Id && repair.Device.Id != Guid.Empty)
+                {
+                    repairDB.Device.Id = repair.Device.Id;
+                    repairDB.Device = await UpdateDevice(repair.Device);
+                }
+                else
+                    repairDB.Device = await UpdateDevice(repair.Device);
             }
+
             repairDB.User = repair.User;
-            repairDB.Specialist = repair.Specialist;
             repairDB.Complaint = repair.Complaint;
             repairDB.Comment = repair.Comment;
             repairDB.Discount = repair.Discount;

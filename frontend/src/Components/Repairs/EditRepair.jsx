@@ -55,6 +55,7 @@ const EditRepairPage = () => {
     };
 
     const setInitialData = (repairDB) => {
+        console.log(repairDB)
         form.setFieldsValue({
             //specialist: repairDB.specialist.fullName,
             client: repairDB.client.id,

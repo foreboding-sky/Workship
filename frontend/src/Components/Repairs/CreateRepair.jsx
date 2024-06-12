@@ -67,7 +67,6 @@ const CreateRepairPage = () => {
     };
 
     const onSubmit = (values) => {
-        console.log(values);
         const request = {
             user: '',
             specialist: {
@@ -120,6 +119,7 @@ const CreateRepairPage = () => {
             totalPrice: 0,
             status: values.status
         }
+        console.log(request);
         axios.post("api/Workshop/repairs", request).then(res => {
             console.log(res);
             setModalContent('Data saved succesfully'); // Set modal content to success message
