@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Form, Input, Button, Select, InputNumber, Space, Divider, Modal, DatePicker } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from 'axios';
-import moment from 'moment';
+import dayjs from "dayjs";
 
 const { TextArea } = Input;
 
@@ -12,11 +12,12 @@ const EditRepairPage = () => {
     const [form] = Form.useForm(); // Define form instance
     let { repairId } = useParams();
 
-    const [repair, serRepair] = useState({});
+    const [repair, setRepair] = useState({});
     const [statuses, setStatuses] = useState([]);
     const [itemTypes, setItemTypes] = useState([]);
     const [deviceTypes, setDeviceTypes] = useState([]);
     const [clients, setClients] = useState([]);
+    const [specialists, setSpecialists] = useState([]);
     const [stockItems, setStockItems] = useState([]);
     const [selectedItemTypes, setSelectedItemTypes] = useState([]);
 
@@ -36,7 +37,7 @@ const EditRepairPage = () => {
         try {
             axios.defaults.baseURL = "http://localhost:5000/";
             const repairDB = await axios.get("api/Workshop/repairs/" + repairId);
-            serRepair(repairDB.data);
+            setRepair(repairDB.data);
             setInitialData(repairDB.data);
 
             const statuses = await axios.get("api/Workshop/repairs/statuses");
@@ -47,6 +48,8 @@ const EditRepairPage = () => {
             setDeviceTypes(deviceTypes.data);
             const clients = await axios.get("api/Workshop/clients");
             setClients(clients.data);
+            const specialists = await axios.get("api/Workshop/specialists");
+            setSpecialists(specialists.data);
             const stockItems = await axios.get("api/Workshop/stock");
             setStockItems(stockItems.data);
         } catch (error) {
@@ -55,27 +58,37 @@ const EditRepairPage = () => {
     };
 
     const setInitialData = (repairDB) => {
-        console.log(repairDB)
+        console.log(repairDB);
         form.setFieldsValue({
-            //specialist: repairDB.specialist.fullName,
-            client: repairDB.client.id,
+            client: {
+                key: repairDB.client.id,
+                value: repairDB.client.id,
+                label: repairDB.client.fullName
+            },
+            specialist: {
+                key: repairDB.specialist.id,
+                value: repairDB.specialist.id,
+                label: repairDB.specialist.fullName
+            },
             phone: repairDB.client.phone,
             device_type: repairDB.device.type,
             device_brand: repairDB.device.brand,
             device_model: repairDB.device.model,
             complaint: repairDB.complaint,
             products: repairDB.products.map(product => ({
+                product_id: product.id,
                 product_type: product.item.type,
                 product_title: product.item.title,
                 product_price: product.price,
                 product_quantity: product.quantity,
             })),
-            orderedProducts: repairDB.orderedProducts.map(orderedProduct => ({
-                ordered_product_type: orderedProduct.item.type,
-                ordered_product_title: orderedProduct.item.title,
+            ordered_products: repairDB.orderedProducts.map(orderedProduct => ({
+                ordered_product_id: orderedProduct.id,
+                ordered_product_type: orderedProduct.product.type,
+                ordered_product_title: orderedProduct.product.title,
                 ordered_product_price: orderedProduct.price,
                 ordered_product_comment: orderedProduct.comment,
-                ordered_product_estimated_date: orderedProduct.estimatedDate ? moment(orderedProduct.estimatedDate) : null,
+                ordered_product_estimated_date: orderedProduct.dateEstimated ? dayjs(orderedProduct.dateEstimated) : null,
             })),
             comment: repairDB.comment,
             status: repairDB.status
@@ -106,11 +119,13 @@ const EditRepairPage = () => {
     };
 
     const onSubmit = (values) => {
-        console.log(values);
         const request = {
             id: repairId,
             user: '',
-            specialist: values.specialist,
+            specialist: {
+                id: values.specialist.key,
+                fullName: values.specialist.label
+            },
             client: {
                 id: values.client.key,
                 fullName: values.client.label,
@@ -140,7 +155,8 @@ const EditRepairPage = () => {
             }) : [],
             orderedProducts: values.ordered_products ? values.ordered_products.map(p => {
                 return {
-                    item: {
+                    id: p.ordered_product_id,
+                    product: {
                         title: p.ordered_product_title,
                         type: p.ordered_product_type,
                         device: {
@@ -150,7 +166,9 @@ const EditRepairPage = () => {
                         },
                     },
                     price: p.ordered_product_price,
-                    comment: p.ordered_product_comment
+                    comment: p.ordered_product_comment,
+                    dateEstimated: p.ordered_product_estimated_date ? p.ordered_product_estimated_date.format('YYYY-MM-DD') : null,
+                    isProcessed: false
                 }
             }) : [],
             comment: values.comment,
@@ -158,8 +176,9 @@ const EditRepairPage = () => {
             totalPrice: 0,
             status: values.status
         }
+        console.log(request);
         axios.post("api/Workshop/repairs/" + repairId, request).then(res => {
-            console.log(res);
+            console.log("API Request result: " + res);
             setModalContent('Data saved succesfully'); // Set modal content to success message
             setModalVisible(true); // Show the modal
         }).catch(error => {
@@ -192,7 +211,8 @@ const EditRepairPage = () => {
             form.setFieldsValue({
                 client: {
                     label: selectedClient.fullName, // Set client full name
-                    key: selectedClient.id // Set client id
+                    key: selectedClient.id, // Set client id
+                    value: selectedClient.id
                 },
                 phone: selectedClient.phone
             });
@@ -219,7 +239,11 @@ const EditRepairPage = () => {
                     </Select>
                 </Form.Item>
                 <Form.Item name="specialist" label="Specialist">
-                    <Input />
+                    <Select showSearch placeholder="Select specialist" labelInValue>
+                        {specialists.map(specialist => {
+                            return <Select.Option filterOption={filterOption} key={specialist.id} value={specialist.id}>{specialist.fullName}</Select.Option>
+                        })}
+                    </Select>
                 </Form.Item>
                 <Form.Item name="client" label="Client">
                     <Select placeholder="Client full name"
@@ -229,7 +253,7 @@ const EditRepairPage = () => {
                                 <Divider style={{ margin: '8px 0', }} />
                                 <Space style={{ padding: '0 8px 4px', }}>
                                     <Input
-                                        placeholder="Please enter item"
+                                        placeholder="Please enter client"
                                         ref={clientNameRef}
                                         value={newClientName}
                                         onChange={onClientNameChange}

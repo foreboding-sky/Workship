@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Select, InputNumber, Space, Divider, Modal, DatePicker } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 import axios from 'axios';
 
 const { TextArea } = Input;
@@ -14,6 +15,7 @@ const CreateRepairPage = () => {
     const [itemTypes, setItemTypes] = useState([]);
     const [deviceTypes, setDeviceTypes] = useState([]);
     const [clients, setClients] = useState([]);
+    const [specialists, setSpecialists] = useState([]);
     const [stockItems, setStockItems] = useState([]);
     const [selectedItemTypes, setSelectedItemTypes] = useState([]);
 
@@ -36,6 +38,8 @@ const CreateRepairPage = () => {
             setDeviceTypes(deviceTypes.data);
             const clients = await axios.get("api/Workshop/clients");
             setClients(clients.data);
+            const specialists = await axios.get("api/Workshop/specialists");
+            setSpecialists(specialists.data);
             const stockItems = await axios.get("api/Workshop/stock");
             setStockItems(stockItems.data);
         } catch (error) {
@@ -70,7 +74,8 @@ const CreateRepairPage = () => {
         const request = {
             user: '',
             specialist: {
-                fullName: values.specialist
+                id: values.specialist.key,
+                fullName: values.specialist.label
             },
             client: {
                 id: values.client.key,
@@ -101,7 +106,7 @@ const CreateRepairPage = () => {
             orderedProducts: values.ordered_products ? values.ordered_products.map(p => {
                 return {
                     id: p.ordered_product_id,
-                    item: {
+                    product: {
                         title: p.ordered_product_title,
                         type: p.ordered_product_type,
                         device: {
@@ -111,7 +116,9 @@ const CreateRepairPage = () => {
                         },
                     },
                     price: p.ordered_product_price,
-                    comment: p.ordered_product_comment
+                    comment: p.ordered_product_comment,
+                    dateEstimated: p.ordered_product_estimated_date ? p.ordered_product_estimated_date.format('YYYY-MM-DD') : null,
+                    isProcessed: false
                 }
             }) : [],
             comment: values.comment,
@@ -178,14 +185,18 @@ const CreateRepairPage = () => {
             </Modal>
             <Form form={form} layout="horizontal" labelCol={{ span: 4 }} style={{ width: "100%", maxWidth: 700, margin: '10px 0' }} onFinish={onSubmit}>
                 <Form.Item name="status" label="Status" rules={[{ required: true, message: 'Status is required' }]}>
-                    <Select showSearch placeholder="Select status">
+                    <Select showSearch placeholder="Select status" >
                         {statuses.map(status => {
                             return <Select.Option filterOption={filterOption} key={status} value={status}>{status}</Select.Option>
                         })}
                     </Select>
                 </Form.Item>
                 <Form.Item name="specialist" label="Specialist">
-                    <Input />
+                    <Select showSearch placeholder="Select specialist" labelInValue>
+                        {specialists.map(specialist => {
+                            return <Select.Option filterOption={filterOption} key={specialist.id} value={specialist.id}>{specialist.fullName}</Select.Option>
+                        })}
+                    </Select>
                 </Form.Item>
                 <Form.Item name="client" label="Client">
                     <Select placeholder="Client full name"
@@ -195,7 +206,7 @@ const CreateRepairPage = () => {
                                 <Divider style={{ margin: '8px 0', }} />
                                 <Space style={{ padding: '0 8px 4px', }}>
                                     <Input
-                                        placeholder="Please enter item"
+                                        placeholder="Please enter client"
                                         ref={clientNameRef}
                                         value={newClientName}
                                         onChange={onClientNameChange}
@@ -206,6 +217,7 @@ const CreateRepairPage = () => {
                                 </Space>
                             </>
                         )}
+
                         options={clients.map((client) => ({
                             label: client.fullName,
                             value: client.id,
@@ -317,7 +329,7 @@ const CreateRepairPage = () => {
                                             <Input placeholder="Product Title" />
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, "ordered_product_price"]} style={{ margin: "0 5px 0 0" }}>
-                                            <Input placeholder="Product Price" />
+                                            <InputNumber placeholder="Product Price" style={{ width: "100%" }} />
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, "ordered_product_comment"]} style={{ margin: "0 5px 0 0" }}>
                                             <Input placeholder="Comment" />

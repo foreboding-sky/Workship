@@ -59,7 +59,7 @@ const RepairsPage = () => {
             title: "Specialist",
             dataIndex: "specialist",
             key: "specialist",
-            render: specialist => specialist
+            render: specialist => specialist?.fullName
         },
         {
             title: "Device",

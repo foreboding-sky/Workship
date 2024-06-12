@@ -160,7 +160,6 @@ namespace Workshop.Data
                         orderDB = new Order
                         {
                             Id = Guid.NewGuid(),
-                            Repair = repair,
                             DateOrdered = order.DateOrdered,
                             DateEstimated = order.DateEstimated,
                             DateRecieved = order.DateRecieved,
@@ -173,7 +172,8 @@ namespace Workshop.Data
                         if (orderDB.Product == null)
                             orderDB.Product = await GetItemByModel(order.Product);
                         if (orderDB.Product == null)
-                            orderDB.Product = new Item { Title = order.Product.Title, Type = order.Product.Type, Device = repair.Device };
+                            orderDB.Product = await CreateItem(new Item { Title = order.Product.Title, Type = order.Product.Type, Device = repair.Device });
+                        orderDB = await CreateOrder(orderDB);
                         ordersDB.Add(orderDB);
                     }
                 }
@@ -335,7 +335,9 @@ namespace Workshop.Data
             return await context.Repairs.Include(c => c.Client)
                                         .Include(c => c.Device)
                                         .Include(c => c.Products).ThenInclude(c => c.Item).ThenInclude(c => c.Item).ThenInclude(c => c.Device)
-                                        .Include(c => c.OrderedProducts).ThenInclude(c => c.Product).ThenInclude(c => c.Device).ToListAsync();
+                                        .Include(c => c.OrderedProducts).ThenInclude(c => c.Product).ThenInclude(c => c.Device)
+                                        .Include(c => c.RepairServices).ThenInclude(c => c.Service)
+                                        .Include(c => c.Specialist).ToListAsync();
         }
 
         public async Task<List<string>> GetAllRepairStatuses()
