@@ -19,6 +19,7 @@ const EditRepairPage = () => {
     const [clients, setClients] = useState([]);
     const [specialists, setSpecialists] = useState([]);
     const [stockItems, setStockItems] = useState([]);
+    const [services, setServices] = useState([]);
     const [selectedItemTypes, setSelectedItemTypes] = useState([]);
 
     //for adding new customer
@@ -52,6 +53,8 @@ const EditRepairPage = () => {
             setSpecialists(specialists.data);
             const stockItems = await axios.get("api/Workshop/stock");
             setStockItems(stockItems.data);
+            const services = await axios.get("api/Workshop/services");
+            setServices(services.data);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -75,6 +78,11 @@ const EditRepairPage = () => {
             device_brand: repairDB.device.brand,
             device_model: repairDB.device.model,
             complaint: repairDB.complaint,
+            services: repairDB.repairServices.map(service => ({
+                service_id: service.id,
+                service_name: service.name,
+                service_price: service.price
+            })),
             products: repairDB.products.map(product => ({
                 product_id: product.id,
                 product_type: product.item.type,
@@ -104,6 +112,17 @@ const EditRepairPage = () => {
             ...prevDictionary,
             [key]: form.getFieldsValue().products[key].product_type
         }));
+    };
+
+    const onServiceChange = (value, key) => {
+        const selectedService = services.find(service => service.name === value);
+        if (selectedService) {
+            const servicePrice = selectedService.price;
+            const serviceId = selectedService.id;
+            const { services } = form.getFieldsValue();
+            Object.assign(services[key], { service_price: servicePrice, service_id: serviceId })
+            form.setFieldsValue({ services })
+        }
     };
 
     const onItemTitleChange = (value, key) => {
@@ -138,6 +157,13 @@ const EditRepairPage = () => {
                 model: values.device_model
             },
             complaint: values.complaint,
+            repairServices: values.services ? values.services.map(s => {
+                return {
+                    id: s.service_id,
+                    name: s.service_name,
+                    price: s.service_price
+                }
+            }) : [],
             products: values.products ? values.products.map(p => {
                 return {
                     id: p.product_id,
@@ -294,6 +320,50 @@ const EditRepairPage = () => {
                 <Form.Item name="complaint" label="Complaint">
                     <Input />
                 </Form.Item>
+                <p>Add Services</p>
+                <Form.List name="services">
+                    {(fields, { add, remove }) => (
+                        <>
+                            {fields.map(({ key, name, ...restField }) => (
+                                <div key={key}
+                                    style={{
+                                        display: "flex", marginBottom: "8px", justifyContent: 'space-between',
+                                        alignItems: "center", gap: "5px", height: "fit-content", width: "100%"
+                                    }}>
+                                    <div style={{
+                                        display: "grid", gridTemplateColumns: "repeat(2, 1fr)",
+                                        gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
+                                    }}>
+                                        <Form.Item {...restField} name={[name, "service_name"]} style={{ margin: "0 5px 0 0" }} rules={fields.length > 0 ? [{ required: true, message: 'Service name is required' }] : []}>
+                                            <Select placeholder="Service name" onSelect={value => onServiceChange(value, key)}>
+                                                {services &&
+                                                    services.map((service) => {
+                                                        return <Select.Option filterOption={filterOption}
+                                                            key={service.id}
+                                                            value={service.name}>
+                                                            {service.name}
+                                                        </Select.Option>
+                                                    })}
+                                            </Select>
+                                        </Form.Item>
+                                        <Form.Item {...restField} name={[name, "service_price"]}>
+                                            <Input placeholder="Service Price" />
+                                        </Form.Item>
+                                        <Form.Item {...restField} name={[name, 'service_id']} style={{ display: 'none' }} >
+                                            <Input />
+                                        </Form.Item>
+                                    </div>
+                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
+                                </div>
+                            ))}
+                            <Form.Item>
+                                <Button type="dashed" onClick={add} block icon={<PlusOutlined />}>
+                                    Add service
+                                </Button>
+                            </Form.Item>
+                        </>
+                    )}
+                </Form.List>
                 <p>Add Products</p>
                 <Form.List name="products">
                     {(fields, { add, remove }) => (

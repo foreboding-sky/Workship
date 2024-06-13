@@ -14,12 +14,18 @@ namespace Workshop.Models
 
         public bool Equals(RepairItem? x, RepairItem? y)
         {
-            return x?.Id == y?.Id;
+            // Compare based on RepairItems.Item.Id if both items are not null
+            if (x?.Item == null || y?.Item == null)
+            {
+                return false;
+            }
+            return x.Item.Id == y.Item.Id;
         }
 
         public int GetHashCode([DisallowNull] RepairItem obj)
         {
-            return obj.Id.ToString().GetHashCode();
+            // Use RepairItems.Item.Id if Item is not null
+            return obj.Item?.Id.GetHashCode() ?? 0;
         }
     }
 }
