@@ -80,6 +80,14 @@ namespace Workshop.Controllers
             return Ok(repairStatuses);
         }
 
+        [HttpGet("repairItems")]
+        public async Task<IActionResult> GetAllRepairItems()
+        {
+            var repairItems = await repository.GetAllRepairItems();
+            List<RepairItemReadDTO> repairItemReadDTOs = mapper.Map<List<RepairItem>, List<RepairItemReadDTO>>(repairItems);
+            return Ok(repairItemReadDTOs);
+        }
+
         [HttpGet("stock/{id}")]
         public async Task<IActionResult> GetStockItemById(Guid id)
         {

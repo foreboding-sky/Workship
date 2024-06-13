@@ -61,7 +61,6 @@ const EditRepairPage = () => {
     };
 
     const setInitialData = (repairDB) => {
-        console.log(repairDB);
         form.setFieldsValue({
             client: {
                 key: repairDB.client.id,
@@ -79,16 +78,17 @@ const EditRepairPage = () => {
             device_model: repairDB.device.model,
             complaint: repairDB.complaint,
             services: repairDB.repairServices.map(service => ({
-                service_id: service.id,
-                service_name: service.name,
-                service_price: service.price
+                service_id: service.service.id,
+                service_name: service.service.name,
+                service_price: service.service.price,
+                repairService_id: service.id
             })),
             products: repairDB.products.map(product => ({
-                product_id: product.id,
-                product_type: product.item.type,
-                product_title: product.item.title,
-                product_price: product.price,
-                product_quantity: product.quantity,
+                product_id: product.item.id,
+                product_type: product.item.item.type,
+                product_title: product.item.item.title,
+                product_price: product.item.price,
+                repairItem_id: product.id
             })),
             ordered_products: repairDB.orderedProducts.map(orderedProduct => ({
                 ordered_product_id: orderedProduct.id,
@@ -151,7 +151,6 @@ const EditRepairPage = () => {
                 phone: values.phone.toString()
             },
             device: {
-                id: repair.device.id, //TODO here
                 type: values.device_type,
                 brand: values.device_brand,
                 model: values.device_model
@@ -159,24 +158,30 @@ const EditRepairPage = () => {
             complaint: values.complaint,
             repairServices: values.services ? values.services.map(s => {
                 return {
-                    id: s.service_id,
-                    name: s.service_name,
-                    price: s.service_price
+                    id: s.repairService_id,
+                    service: {
+                        id: s.service_id,
+                        name: s.service_name,
+                        price: s.service_price
+                    }
                 }
             }) : [],
             products: values.products ? values.products.map(p => {
                 return {
-                    id: p.product_id,
+                    id: p.repairItem_id,
                     item: {
-                        title: p.product_title,
-                        type: p.product_type,
-                        device: {
-                            type: values.device_type,
-                            brand: values.device_brand,
-                            model: values.device_model
+                        id: p.product_id,
+                        item: {
+                            title: p.product_title,
+                            type: p.product_type,
+                            device: {
+                                type: values.device_type,
+                                brand: values.device_brand,
+                                model: values.device_model
+                            },
                         },
-                    },
-                    price: p.product_price
+                        price: p.product_price
+                    }
                 }
             }) : [],
             orderedProducts: values.ordered_products ? values.ordered_products.map(p => {
@@ -202,9 +207,9 @@ const EditRepairPage = () => {
             totalPrice: 0,
             status: values.status
         }
-        console.log(request);
         axios.post("api/Workshop/repairs/" + repairId, request).then(res => {
-            console.log("API Request result: " + res);
+            console.log("API Request result: ");
+            console.log(res);
             setModalContent('Data saved succesfully'); // Set modal content to success message
             setModalVisible(true); // Show the modal
         }).catch(error => {
@@ -219,7 +224,6 @@ const EditRepairPage = () => {
         axios.defaults.baseURL = "http://localhost:5000/";
         axios.post("api/Workshop/clients", { FullName: newClientName })
             .then(res => setClients([...clients, res.data]));
-        console.log(clients);
         setNewClientName('');
         setTimeout(() => {
             clientNameRef.current?.focus();
@@ -352,6 +356,9 @@ const EditRepairPage = () => {
                                         <Form.Item {...restField} name={[name, 'service_id']} style={{ display: 'none' }} >
                                             <Input />
                                         </Form.Item>
+                                        <Form.Item {...restField} name={[name, 'repairService_id']} style={{ display: 'none' }} >
+                                            <Input />
+                                        </Form.Item>
                                     </div>
                                     <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
                                 </div>
@@ -406,6 +413,9 @@ const EditRepairPage = () => {
                                             <Input placeholder="Product Price" />
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, 'product_id']} style={{ display: 'none' }} >
+                                            <Input />
+                                        </Form.Item>
+                                        <Form.Item {...restField} name={[name, 'repairItem_id']} style={{ display: 'none' }} >
                                             <Input />
                                         </Form.Item>
                                     </div>

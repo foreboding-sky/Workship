@@ -330,6 +330,11 @@ namespace Workshop.Data
             return await context.Orders.Include(c => c.Product).ThenInclude(c => c.Device).ToListAsync();
         }
 
+        public async Task<List<RepairItem>> GetAllRepairItems()
+        {
+            return await context.RepairItems.Include(c => c.Item).ThenInclude(c => c.Item).ThenInclude(c => c.Device).ToListAsync();
+        }
+
         public async Task<List<Repair>> GetAllRepairs()
         {
             return await context.Repairs.Include(c => c.Client)
@@ -338,6 +343,11 @@ namespace Workshop.Data
                                         .Include(c => c.OrderedProducts).ThenInclude(c => c.Product).ThenInclude(c => c.Device)
                                         .Include(c => c.RepairServices).ThenInclude(c => c.Service)
                                         .Include(c => c.Specialist).ToListAsync();
+        }
+
+        public async Task<List<RepairService>> GetAllRepairServices()
+        {
+            return await context.RepairServices.Include(c => c.Service).ToListAsync();
         }
 
         public async Task<List<string>> GetAllRepairStatuses()
@@ -539,6 +549,8 @@ namespace Workshop.Data
             var selectedServices = repair.RepairServices?.ToList() ?? new List<RepairService>();
             var servicesToAdd = selectedServices.Except(existingServices, new RepairServiceComparer()).ToList();
             var servicesToRemove = existingServices.Except(selectedServices, new RepairServiceComparer()).ToList();
+
+            //Get services from database with actual id's
             List<Service> ServicesToAddDB = new List<Service>();
             foreach (var repairService in servicesToAdd)
             {
@@ -547,6 +559,22 @@ namespace Workshop.Data
                     var service = context.Services.Find(repairService.Service.Id);
                     if (service != null)
                         ServicesToAddDB.Add(service);
+                }
+            }
+
+            // Handle updates to existing services
+            foreach (var existingService in existingServices)
+            {
+                var matchingSelectedService = selectedServices.FirstOrDefault(si => si.Id == existingService.Id);
+                if (matchingSelectedService != null && existingService.Service != null && matchingSelectedService.Service != null)
+                {
+                    if (existingService.Service.Id != matchingSelectedService.Service.Id)
+                    {
+                        // Update the existing RepairService's Service
+                        var newService = await GetServiceById(matchingSelectedService.Service.Id);
+                        if (newService != null)
+                            existingService.Service = newService;
+                    }
                 }
             }
 
@@ -562,6 +590,8 @@ namespace Workshop.Data
             var selectedItems = repair.Products?.ToList() ?? new List<RepairItem>();
             var itemsToAdd = selectedItems.Except(existingItems, new RepairItemComparer()).ToList();
             var itemsToRemove = existingItems.Except(selectedItems, new RepairItemComparer()).ToList();
+
+            //Get stock items from database with actual id's
             List<StockItem> itemsToAddDB = new List<StockItem>();
             foreach (var repairItem in itemsToAdd)
             {
@@ -570,6 +600,22 @@ namespace Workshop.Data
                     var item = await GetStockItemById(repairItem.Item.Id);
                     if (item != null)
                         itemsToAddDB.Add(item);
+                }
+            }
+
+            // Handle updates to existing items
+            foreach (var existingItem in existingItems)
+            {
+                var matchingSelectedItem = selectedItems.FirstOrDefault(si => si.Id == existingItem.Id);
+                if (matchingSelectedItem != null && existingItem.Item != null && matchingSelectedItem.Item != null)
+                {
+                    if (existingItem.Item.Id != matchingSelectedItem.Item.Id)
+                    {
+                        // Update the existing RepairItem's StockItem
+                        var newItem = await GetStockItemById(matchingSelectedItem.Item.Id);
+                        if (newItem != null)
+                            existingItem.Item = newItem;
+                    }
                 }
             }
 
@@ -677,18 +723,36 @@ namespace Workshop.Data
                 stockDB.Item = null;
             if (stock.Item != null)
             {
-                if (stockDB.Item == null)
-                    stockDB.Item = new Item() { Id = Guid.NewGuid() };
-                stockDB.Item.Title = stock.Item.Title;
-                stockDB.Item.Type = stock.Item.Type;
+                var itemDB = await UpdateItem(stock.Item);
+                if (itemDB == null)
+                {
+                    itemDB = new Item()
+                    {
+                        Id = Guid.NewGuid(),
+                        Title = stock.Item.Title,
+                        Type = stock.Item.Type
+                    };
+                }
+                stockDB.Item = itemDB;
+
                 if (stock.Item.Device != null)
                 {
+                    var deviceDB = await UpdateDevice(stock.Item.Device);
+                    if (deviceDB == null)
+                    {
+                        deviceDB = new Device()
+                        {
+                            Id = Guid.NewGuid(),
+                            Brand = stock.Item.Device.Brand,
+                            Model = stock.Item.Device.Model,
+                            Type = stock.Item.Device.Type
+                        };
+                    }
+
                     if (stockDB.Item.Device == null)
                         stockDB.Item.Device = new Device();
 
-                    stockDB.Item.Device.Type = stock.Item.Device.Type;
-                    stockDB.Item.Device.Brand = stock.Item.Device.Brand;
-                    stockDB.Item.Device.Model = stock.Item.Device.Model;
+                    stockDB.Item.Device = deviceDB;
                 }
             }
 

@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Space, Table, Button, Tag } from 'antd';
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 const { Column, ColumnGroup } = Table;
 
 const OrdersPage = () => {
+
+    const [array, setArray] = useState([]);
 
     useEffect(() => {
         console.log("useEffect on OrdersPage");
@@ -14,7 +17,7 @@ const OrdersPage = () => {
             console.log(res.data);
         })
     }, [])
-    const [array, setArray] = useState([]);
+
 
     const ChangeStatus = (record) => {
         //change order status
@@ -34,33 +37,27 @@ const OrdersPage = () => {
     };
 
     const columns = [
-        {
-            title: "User",
-            dataIndex: "user",
-            key: "user",
-            render: user => user
-        },
-        {
-            title: "Market",
-            dataIndex: "market",
-            key: "market",
-            render: market => market
-        },
+        // {
+        //     title: "Market",
+        //     dataIndex: "market",
+        //     key: "market",
+        //     render: market => market
+        // },
         {
             title: "Device",
-            dataIndex: ["device", "brand"],
+            dataIndex: ["product"],
             key: "specialist",
-            render: (text, record) => <p>{text} {record.device.model}</p>
+            render: (record) => <p>{record.device.brand} {record.device.model}</p> //Display brand as "text" and model
         },
-        {
-            title: "Client",
-            dataIndex: ["client", "fullName"],
-            key: "client",
-            render: client => client
-        },
+        // {
+        //     title: "Client",
+        //     dataIndex: ["client", "fullName"],
+        //     key: "client",
+        //     render: client => client //Display client's fullname
+        // },
         {
             title: "Product", //TODO HERE
-            dataIndex: "product",
+            dataIndex: ["product", "title"],
             key: "product",
             render: product => product
         },
@@ -71,10 +68,11 @@ const OrdersPage = () => {
             render: comment => comment
         },
         {
-            title: "Est. Date", //TODO HERE
-            dataIndex: "date",
+            title: "Est. Date",
+            dataIndex: "dateEstimated",
             key: "date",
-            render: date => date
+            render: date => dayjs(date).format('YYYY-MM-DD')
+
         },
         {
             title: "Change status", //TODO HERE

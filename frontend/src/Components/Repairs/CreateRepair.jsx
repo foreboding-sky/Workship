@@ -102,19 +102,30 @@ const CreateRepairPage = () => {
                 model: values.device_model
             },
             complaint: values.complaint,
+            repairServices: values.services ? values.services.map(s => {
+                return {
+                    service: {
+                        id: s.service_id,
+                        name: s.service_name,
+                        price: s.service_price
+                    }
+                }
+            }) : [],
             products: values.products ? values.products.map(p => {
                 return {
-                    id: p.product_id,
                     item: {
-                        title: p.product_title,
-                        type: p.product_type,
-                        device: {
-                            type: values.device_type,
-                            brand: values.device_brand,
-                            model: values.device_model
+                        id: p.product_id,
+                        item: {
+                            title: p.product_title,
+                            type: p.product_type,
+                            device: {
+                                type: values.device_type,
+                                brand: values.device_brand,
+                                model: values.device_model
+                            },
                         },
-                    },
-                    price: p.product_price
+                        price: p.product_price
+                    }
                 }
             }) : [],
             orderedProducts: values.ordered_products ? values.ordered_products.map(p => {

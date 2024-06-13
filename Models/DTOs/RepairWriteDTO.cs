@@ -17,11 +17,11 @@ namespace Workshop.Models
         [JsonPropertyName("complaint")]
         public string? Complaint { get; set; }
         [JsonPropertyName("products")]
-        public List<StockItemWriteDTO>? Products { get; set; } //Many to Many relationship
+        public List<RepairItemWriteDTO>? Products { get; set; } //Many to Many relationship
         [JsonPropertyName("orderedProducts")]
         public List<OrderWriteDTO>? OrderedProducts { get; set; }
         [JsonPropertyName("repairServices")]
-        public List<ServiceWriteDTO>? RepairServices { get; set; }//Many to Many relationship
+        public List<RepairServiceWriteDTO>? RepairServices { get; set; }//Many to Many relationship
         [JsonPropertyName("comment")]
         public string? Comment { get; set; }
         [JsonPropertyName("discount")]

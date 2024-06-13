@@ -31,8 +31,10 @@ namespace Workshop.Data
         public Task<List<string>> GetAllRepairStatuses();
         //repair item
         public Task<RepairItem> CreateRepairItem(RepairItem repairItem);
+        public Task<List<RepairItem>> GetAllRepairItems();
         //repair service
         public Task<RepairService> CreateRepairService(RepairService repairItem);
+        public Task<List<RepairService>> GetAllRepairServices();
         //order
         public Task<Order> CreateOrder(Order order);
         public Task DeleteOrder(Guid id);
