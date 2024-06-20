@@ -7,11 +7,11 @@ const AppLayout = ({ children }) => {
 
     const items = [
         { label: <Link to='/'>Repairs</Link>, key: '1' },
-        { label: <Link to='/orders'>Orders</Link>, key: '2' },
-        { label: <Link to='/storage'>Storage</Link>, key: '3' },
-        { label: <Link to='/clients'>Clients</Link>, key: '4' },
-        { label: <Link to='/specialists'>Specialists</Link>, key: '5' },
-        { label: <Link to='/services'>Services</Link>, key: '6' },
+        { label: <Link to='/specialists'>Specialists</Link>, key: '2' },
+        { label: <Link to='/clients'>Clients</Link>, key: '3' },
+        { label: <Link to='/storage'>Storage</Link>, key: '4' },
+        { label: <Link to='/services'>Services</Link>, key: '5' },
+        { label: <Link to='/orders'>Orders</Link>, key: '6' },
         { label: <Link to='/archive'>Archive</Link>, key: '7' },
     ]
 

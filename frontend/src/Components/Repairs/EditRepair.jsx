@@ -352,7 +352,7 @@ const EditRepairPage = () => {
                                             </Select>
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, "service_price"]}>
-                                            <Input placeholder="Service Price" />
+                                            <Input placeholder="Service Price" disabled style={{ backgroundColor: 'white', color: 'black' }} />
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, 'service_id']} style={{ display: 'none' }} >
                                             <Input />
@@ -411,7 +411,7 @@ const EditRepairPage = () => {
                                             </Select>
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, "product_price"]}>
-                                            <Input placeholder="Product Price" />
+                                            <Input placeholder="Product Price" disabled style={{ backgroundColor: 'white', color: 'black' }} />
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, 'product_id']} style={{ display: 'none' }} >
                                             <Input />
