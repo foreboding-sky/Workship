@@ -42,6 +42,7 @@ namespace Workshop.Data
         public Task<Order> GetOrderById(Guid id);
         public Task<Order> GetOrderByModel(Order order);
         public Task<Order> UpdateOrder(Order order);
+        public Task<Order> ProcessOrder(Guid id);
         //service
         public Task<Item> CreateItem(Item item);
         public Task DeleteItem(Guid id);

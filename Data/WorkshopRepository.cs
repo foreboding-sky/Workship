@@ -18,6 +18,18 @@ namespace Workshop.Data
             this.context = context;
         }
 
+        public async Task<Order> ProcessOrder(Guid id)
+        {
+            var order = await context.Orders.FindAsync(id);
+            if (order != null)
+            {
+                order.IsProcessed = true;
+                await context.SaveChangesAsync();
+                return order;
+            }
+            return null;
+        }
+
         public async Task<Client> CreateClient(Client client)
         {
             context.Clients.Add(client);

@@ -7,7 +7,7 @@ import CreateRepair from './Components/Repairs/CreateRepair';
 import EditRepair from './Components/Repairs/EditRepair';
 
 import OrdersPage from './Components/Orders/OrdersPage';
-import CreateOrder from './Components/Orders/CreateOrder';
+import ArchivePage from './Components/Orders/ArchivePage';
 
 import StoragePage from './Components/Storage/StoragePage';
 import CreateStorageItem from './Components/Storage/CreateStorageItem';
@@ -36,7 +36,7 @@ function App() {
             <Route path="/workshop/create" element={<CreateRepair />} />
             <Route path="/workshop/edit/:repairId" element={<EditRepair />} />
             <Route path="/orders" element={<OrdersPage />} />
-            <Route path="/orders/create" element={<CreateOrder />} />
+            <Route path='/archive' element={<ArchivePage />} />
             <Route path="/clients" element={<ClientsPage />} />
             <Route path='/clients/edit/:clientId' element={<EditClient />} />
             <Route path="/clients/create" element={<CreateClient />} />

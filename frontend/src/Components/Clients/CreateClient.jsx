@@ -26,20 +26,20 @@ const CreateClientPage = () => {
     };
 
     return (
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <Form layout="horizontal" labelCol={{ span: 4 }} style={{ width: "100%", maxWidth: 500, margin: '10px 0' }} onFinish={onSubmit}>
                 <Form.Item name="fullName" label="Full Name"
                     rules={[{ required: true, message: 'Please input clients full name!' }]}>
-                    <Input />
+                    <Input placeholder={'Clients full name'} />
                 </Form.Item>
                 <Form.Item name="phone"
-                    label="Phone Number"
+                    label="Phone"
                     rules={[{ required: true, message: 'Please input your phone number!' }]}
                 >
-                    <InputNumber maxLength={12} style={{ width: "100%" }} />
+                    <InputNumber placeholder={'Phone Number'} maxLength={12} style={{ width: "100%" }} />
                 </Form.Item>
-                <Form.Item name="comment" label="Comment">
-                    <TextArea rows={4} />
+                <Form.Item style={{ display: "flex", justifyContent: 'end' }} name="comment" >
+                    <TextArea style={{ width: 661 }} placeholder={'Comment'} rows={4} />
                 </Form.Item>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '10px' }}>
                     <Form.Item>

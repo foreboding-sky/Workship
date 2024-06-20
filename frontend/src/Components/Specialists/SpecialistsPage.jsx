@@ -57,6 +57,7 @@ const SpecialistsPage = () => {
             title: "Edit",
             dataIndex: "edit",
             key: "edit",
+            width: 150,
             render: (_, record) => {
                 return (<Button type="primary" block onClick={() => EditSpecialist(record)}>
                     Edit
@@ -67,6 +68,7 @@ const SpecialistsPage = () => {
             title: "Delete",
             dataIndex: "delete",
             key: "delete",
+            width: 150,
             render: (_, record) => {
                 return (<Button type="primary" block onClick={() => DeleteSpecialist(record)}>
                     Delete
@@ -76,7 +78,7 @@ const SpecialistsPage = () => {
     ]
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'start', width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', minWidth: '900px' }}>
                 <Button type="primary" style={{ margin: '10px 0' }}>
                     <Link to='/specialists/create'>Add new specialist</Link>
                 </Button>

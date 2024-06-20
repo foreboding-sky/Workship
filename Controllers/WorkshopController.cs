@@ -135,11 +135,21 @@ namespace Workshop.Controllers
             return Ok(orderReadDTO);
         }
 
-        [HttpGet("orders")]
-        public async Task<IActionResult> GetAllOrders()
+        [HttpGet("orders/unprocessed")]
+        public async Task<IActionResult> GetAllUnprocessedOrders()
         {
             var orders = await repository.GetAllOrders();
-            List<OrderReadDTO> ordersReadDTOs = mapper.Map<List<Order>, List<OrderReadDTO>>(orders);
+            var sortedOrders = orders.Where(x => x.IsProcessed == false).ToList();
+            List<OrderReadDTO> ordersReadDTOs = mapper.Map<List<Order>, List<OrderReadDTO>>(sortedOrders);
+            return Ok(ordersReadDTOs);
+        }
+
+        [HttpGet("orders/processed")]
+        public async Task<IActionResult> GetAllProcessedOrders()
+        {
+            var orders = await repository.GetAllOrders();
+            var sortedOrders = orders.Where(x => x.IsProcessed == true).ToList();
+            List<OrderReadDTO> ordersReadDTOs = mapper.Map<List<Order>, List<OrderReadDTO>>(sortedOrders);
             return Ok(ordersReadDTOs);
         }
 
@@ -259,54 +269,9 @@ namespace Workshop.Controllers
                 StockItemReadDTO stockReadDTO = mapper.Map<StockItemReadDTO>(stock);
                 return Ok(stockReadDTO);
             }
-            // stockDB.ItemId = item.Id;
-            // stockDB.Item = item;
-            // stockDB.Item.Device = device;
-            // await repository.UpdateStockItem(stockDB);
             StockItemReadDTO stockDBReadDTO = mapper.Map<StockItemReadDTO>(stockDB);
             return Ok(stockDBReadDTO);
         }
-
-        // [HttpPost("orders")]
-        // public async Task<IActionResult> CreateOrder([FromBody] OrderWriteDTO orderDTO)
-        // {
-        //     if (!ModelState.IsValid)
-        //     {
-        //         return BadRequest();
-        //     }
-        //     Order order = mapper.Map<Order>(orderDTO);
-
-        //     var device = repository.GetAllDevices().Result
-        //         .Find(device => device.Brand == order.Product.Device.Brand
-        //                     && device.Model == order.Product.Device.Model);
-        //     if (device == null)
-        //     {
-        //         device = order.Product.Device;
-        //         device.Id = Guid.NewGuid();
-        //         await repository.CreateDevice(device);
-        //     }
-
-        //     var item = repository.GetAllItems().Result
-        //         .Find(item => item.Title == order.Product.Title
-        //                     && item.Device.Brand == device.Brand
-        //                     && item.Device.Model == device.Model);
-
-        //     if (item == null)
-        //     {
-        //         item = order.Product;
-        //         item.Id = Guid.NewGuid();
-        //         await repository.CreateItem(item);
-        //     }
-
-        //     var orderDB =
-        //     order.Id = Guid.NewGuid();
-        //     order.Product = item;
-        //     order.Product.Device = device;
-        //     order.DateOrdered = DateTime.Now;
-        //     order.IsProcessed = false;
-        //     await repository.CreateOrder(order);
-        //     return Ok();
-        // }
 
         [HttpPost("clients/{id}")]
         public async Task<IActionResult> UpdateClient([FromBody] ClientWriteDTO clientDTO, Guid id)
@@ -358,6 +323,18 @@ namespace Workshop.Controllers
             var updatedRepair = await repository.UpdateRepair(repair);
             RepairReadDTO repairReadDTO = mapper.Map<RepairReadDTO>(updatedRepair);
             return Ok(repairReadDTO);
+        }
+
+        [HttpPost("orders/process/{id}")]
+        public async Task<IActionResult> ProcessOrder(Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var updatedOrder = await repository.ProcessOrder(id);
+            OrderReadDTO orderReadDTO = mapper.Map<OrderReadDTO>(updatedOrder);
+            return Ok(orderReadDTO);
         }
 
         [HttpPost("stock/{id}")]

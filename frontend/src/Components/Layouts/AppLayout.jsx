@@ -12,10 +12,11 @@ const AppLayout = ({ children }) => {
         { label: <Link to='/clients'>Clients</Link>, key: '4' },
         { label: <Link to='/specialists'>Specialists</Link>, key: '5' },
         { label: <Link to='/services'>Services</Link>, key: '6' },
+        { label: <Link to='/archive'>Archive</Link>, key: '7' },
     ]
 
     return (
-        <Layout style={{ height: "100vh" }}> {/* TODO fix style here */}
+        <Layout style={{ minHeight: "100vh" }}>
             <Sider>
                 <Menu
                     defaultSelectedKeys={['1']}
@@ -27,7 +28,7 @@ const AppLayout = ({ children }) => {
                     Workshop
                 </Header>
 
-                <Content className="site-layout" style={{ padding: '0 50px' }}>
+                <Content className="site-layout" style={{ display: "flex", justifyContent: "center" }}>
                     {children}
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>Workshop app</Footer>

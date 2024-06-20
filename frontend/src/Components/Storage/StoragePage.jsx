@@ -74,15 +74,10 @@ const StoragePage = () => {
             render: price => price
         },
         {
-            title: "Quantity",
-            dataIndex: "quantity",
-            key: "quantity",
-            render: quantity => quantity
-        },
-        {
             title: "Edit",
             dataIndex: "edit",
             key: "edit",
+            width: 150,
             render: (_, record) => {
                 return (<Button type="primary" block onClick={() => EditItem(record)}>
                     Edit
@@ -93,6 +88,7 @@ const StoragePage = () => {
             title: "Delete",
             dataIndex: "delete",
             key: "delete",
+            width: 150,
             render: (_, record) => {
                 return (<Button type="primary" block onClick={() => DeleteItem(record)}>
                     Delete
@@ -102,7 +98,7 @@ const StoragePage = () => {
     ]
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'start', width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', minWidth: '900px' }}>
                 <Button type="primary" style={{ margin: '10px 0' }}>
                     <Link to='/storage/create'>Add new product</Link>
                 </Button>

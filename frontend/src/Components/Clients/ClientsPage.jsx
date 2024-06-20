@@ -84,7 +84,7 @@ const ClientsPage = () => {
     ]
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'start', width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', minWidth: '900px' }}>
                 <Button type="primary" style={{ margin: '10px 0' }}>
                     <Link to='/clients/create'>Add new client</Link>
                 </Button>

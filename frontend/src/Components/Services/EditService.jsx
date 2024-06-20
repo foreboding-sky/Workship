@@ -49,16 +49,16 @@ const EditSpecialistPage = () => {
     };
 
     return (
-        <div style={{ width: "100%" }}>
-            <Form form={form} layout="horizontal" labelCol={{ span: 4 }} style={{ maxWidth: 500, margin: '10px 0' }} onFinish={onSubmit}>
-                <Form.Item name="name" label="Name">
-                    <Input />
+        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+            <Form form={form} layout="horizontal" labelCol={{ span: 4 }} style={{ width: "100%", maxWidth: 500, margin: '10px 0' }} onFinish={onSubmit}>
+                <Form.Item name="name" label="Name"
+                    rules={[{ required: true, message: 'Please input service name!' }]}>
+                    <Input placeholder={'Service name'} />
                 </Form.Item>
-                <Form.Item name="price"
-                    label="Price"
-                    rules={[{ required: true, message: 'Please input price of provided service!' }]}
+                <Form.Item name="price" label="Price"
+                    rules={[{ required: true, message: 'Please input service price!' }]}
                 >
-                    <InputNumber style={{ width: "100%" }} />
+                    <InputNumber placeholder={'Service price'} style={{ width: "100%" }} />
                 </Form.Item>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '10px' }}>
                     <Form.Item>

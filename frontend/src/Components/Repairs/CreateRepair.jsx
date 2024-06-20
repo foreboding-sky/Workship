@@ -204,27 +204,27 @@ const CreateRepairPage = () => {
     }, [])
 
     return (
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <Modal title="Server response" open={modalVisible} onOk={handleModalOk} onCancel={() => setModalVisible(false)}>
                 <p>{modalContent}</p>
             </Modal>
             <Form form={form} layout="horizontal" labelCol={{ span: 4 }} style={{ width: "100%", maxWidth: 700, margin: '10px 0' }} onFinish={onSubmit}>
                 <Form.Item name="status" label="Status" rules={[{ required: true, message: 'Status is required' }]}>
-                    <Select showSearch placeholder="Select status" >
+                    <Select showSearch placeholder="Select status" style={{ textAlign: 'left' }}>
                         {statuses.map(status => {
                             return <Select.Option filterOption={filterOption} key={status} value={status}>{status}</Select.Option>
                         })}
                     </Select>
                 </Form.Item>
                 <Form.Item name="specialist" label="Specialist">
-                    <Select showSearch placeholder="Select specialist" labelInValue>
+                    <Select showSearch placeholder="Select specialist" labelInValue style={{ textAlign: 'left' }}>
                         {specialists.map(specialist => {
                             return <Select.Option filterOption={filterOption} key={specialist.id} value={specialist.id}>{specialist.fullName}</Select.Option>
                         })}
                     </Select>
                 </Form.Item>
                 <Form.Item name="client" label="Client">
-                    <Select placeholder="Client full name"
+                    <Select placeholder="Client full name" style={{ textAlign: 'left' }}
                         dropdownRender={(menu) => (
                             <>
                                 {menu}
@@ -255,23 +255,23 @@ const CreateRepairPage = () => {
                     label="Phone Number"
                     rules={[{ required: true, message: 'Please input your phone number!' }]}
                 >
-                    <InputNumber maxLength={12} style={{ width: "100%" }} />
+                    <InputNumber placeholder={'Phone Number'} maxLength={12} style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item name="device_type" label="Device type" rules={[{ required: true, message: 'Device type is required' }]}>
-                    <Select showSearch placeholder="Device Type">
+                    <Select showSearch placeholder="Device Type" style={{ textAlign: 'left' }}>
                         {deviceTypes.map(deviceType => {
                             return <Select.Option filterOption={filterOption} key={deviceType} value={deviceType}>{deviceType}</Select.Option>
                         })}
                     </Select>
                 </Form.Item>
                 <Form.Item name="device_brand" label="Brand">
-                    <Input />
+                    <Input placeholder={'Brand'} />
                 </Form.Item>
                 <Form.Item name="device_model" label="Model">
-                    <Input />
+                    <Input placeholder={'Model'} />
                 </Form.Item>
                 <Form.Item name="complaint" label="Complaint">
-                    <Input />
+                    <Input placeholder={'Complaint'} />
                 </Form.Item>
                 <p>Add Services</p>
                 <Form.List name="services">
@@ -281,14 +281,15 @@ const CreateRepairPage = () => {
                                 <div key={key}
                                     style={{
                                         display: "flex", marginBottom: "8px", justifyContent: 'space-between',
-                                        alignItems: "center", gap: "5px", height: "fit-content", width: "100%"
+                                        alignItems: "center", gap: "5px", height: "32px", width: "100%"
                                     }}>
+                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
                                     <div style={{
                                         display: "grid", gridTemplateColumns: "repeat(2, 1fr)",
                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
                                     }}>
                                         <Form.Item {...restField} name={[name, "service_name"]} style={{ margin: "0 5px 0 0" }} rules={fields.length > 0 ? [{ required: true, message: 'Service name is required' }] : []}>
-                                            <Select placeholder="Service name" onSelect={value => onServiceChange(value, key)}>
+                                            <Select placeholder="Service name" onSelect={value => onServiceChange(value, key)} style={{ textAlign: 'left' }}>
                                                 {services &&
                                                     services.map((service) => {
                                                         return <Select.Option filterOption={filterOption}
@@ -306,11 +307,10 @@ const CreateRepairPage = () => {
                                             <Input />
                                         </Form.Item>
                                     </div>
-                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
                                 </div>
                             ))}
-                            <Form.Item>
-                                <Button type="dashed" onClick={add} block icon={<PlusOutlined />}>
+                            <Form.Item style={{ display: "flex", justifyContent: 'end' }}>
+                                <Button style={{ width: '661px' }} type="dashed" onClick={add} block icon={<PlusOutlined />}>
                                     Add service
                                 </Button>
                             </Form.Item>
@@ -325,14 +325,15 @@ const CreateRepairPage = () => {
                                 <div key={key}
                                     style={{
                                         display: "flex", marginBottom: "8px", justifyContent: 'space-between',
-                                        alignItems: "center", gap: "5px", height: "fit-content", width: "100%"
+                                        alignItems: "center", gap: "5px", height: "32px", width: "100%"
                                     }}>
+                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
                                     <div style={{
                                         display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
                                     }}>
                                         <Form.Item {...restField} name={[name, "product_type"]} style={{ margin: "0 5px 0 0" }} rules={fields.length > 0 ? [{ required: true, message: 'Item type is required' }] : []}>
-                                            <Select showSearch placeholder="Product Type" onSelect={value => onItemTypeChange(value, key)}>
+                                            <Select showSearch placeholder="Product Type" onSelect={value => onItemTypeChange(value, key)} style={{ textAlign: 'left' }}>
                                                 {itemTypes && itemTypes.map(itemType => {
                                                     return <Select.Option filterOption={filterOption}
                                                         key={itemType}
@@ -343,7 +344,7 @@ const CreateRepairPage = () => {
                                             </Select>
                                         </Form.Item>
                                         <Form.Item {...restField} name={[name, "product_title"]} style={{ margin: "0 5px 0 0" }} rules={fields.length > 0 ? [{ required: true, message: 'Item title is required' }] : []}>
-                                            <Select showSearch placeholder="Product Title" onSelect={value => onItemTitleChange(value, key)}>
+                                            <Select showSearch placeholder="Product Title" onSelect={value => onItemTitleChange(value, key)} style={{ textAlign: 'left' }}>
                                                 {stockItems &&
                                                     stockItems.filter(stockItem => stockItem.item.type === selectedItemTypes[key] || selectedItemTypes[key] === undefined)
                                                         .map((stockItem) => {
@@ -362,11 +363,10 @@ const CreateRepairPage = () => {
                                             <Input />
                                         </Form.Item>
                                     </div>
-                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
                                 </div>
                             ))}
-                            <Form.Item>
-                                <Button type="dashed" onClick={add} block icon={<PlusOutlined />}>
+                            <Form.Item style={{ display: "flex", justifyContent: 'end' }}>
+                                <Button style={{ width: '661px' }} type="dashed" onClick={add} block icon={<PlusOutlined />}>
                                     Add item
                                 </Button>
                             </Form.Item>
@@ -381,14 +381,15 @@ const CreateRepairPage = () => {
                                 <div key={key}
                                     style={{
                                         display: "flex", marginBottom: "8px", justifyContent: 'space-between',
-                                        alignItems: "center", gap: "5px", height: "fit-content", width: "100%"
+                                        alignItems: "center", gap: "5px", height: "32px", width: "100%"
                                     }}>
+                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
                                     <div style={{
                                         display: "grid", gridTemplateColumns: "repeat(5, 1fr)",
                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
                                     }}>
                                         <Form.Item {...restField} name={[name, "ordered_product_type"]} style={{ margin: "0 5px 0 0" }} rules={fields.length > 0 ? [{ required: true, message: 'Item type is required' }] : []}>
-                                            <Select showSearch placeholder="Product Type">
+                                            <Select showSearch placeholder="Product Type" style={{ textAlign: 'left' }}>
                                                 {itemTypes && itemTypes.map(itemType => {
                                                     return <Select.Option filterOption={filterOption} key={itemType} value={itemType}>{itemType}</Select.Option>
                                                 })}
@@ -410,28 +411,27 @@ const CreateRepairPage = () => {
                                             <Input />
                                         </Form.Item>
                                     </div>
-                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
                                 </div>
                             ))}
-                            <Form.Item>
-                                <Button type="dashed" onClick={add} block icon={<PlusOutlined />}>
+                            <Form.Item style={{ display: "flex", justifyContent: 'end' }}>
+                                <Button style={{ width: '661px' }} type="dashed" onClick={add} block icon={<PlusOutlined />}>
                                     Add ordered item
                                 </Button>
                             </Form.Item>
                         </>
                     )}
                 </Form.List>
-                <Form.Item name="comment" label="Comment">
-                    <TextArea rows={4} />
+                <Form.Item style={{ display: "flex", justifyContent: 'end' }} name="comment" >
+                    <TextArea style={{ width: 661 }} placeholder={'Comment'} rows={4} />
                 </Form.Item>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '10px' }}>
+                <div style={{ display: 'flex', width: '100%', justifyContent: "flex-end", gap: '10px' }}>
                     <Form.Item>
-                        <Button type="primary" htmlType='submit' style={{ width: "100%" }}>
+                        <Button type="primary" htmlType='submit' style={{ width: "325px" }}>
                             Submit
                         </Button>
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" block style={{ width: "100%", backgroundColor: '#d9534f', color: 'white' }} onClick={() => NavBack()}>
+                        <Button type="primary" block style={{ width: "325px", backgroundColor: '#d9534f', color: 'white' }} onClick={() => NavBack()}>
                             Cancel
                         </Button>
                     </Form.Item>

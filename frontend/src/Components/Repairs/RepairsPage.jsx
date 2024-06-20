@@ -84,6 +84,7 @@ const RepairsPage = () => {
             title: "Edit",
             dataIndex: "edit",
             key: "edit",
+            width: 150,
             render: (_, record) => {
                 return (<Button type="primary" block onClick={() => EditRepair(record)}>
                     <Link to='/workshop/edit'>Edit</Link>
@@ -94,6 +95,7 @@ const RepairsPage = () => {
             title: "Delete",
             dataIndex: "delete",
             key: "delete",
+            width: 150,
             render: (_, record) => {
                 return (<Button type="primary" block onClick={() => DeleteRepair(record)}>
                     Delete
@@ -104,7 +106,7 @@ const RepairsPage = () => {
 
     return (
         <div >
-            <div style={{ display: 'flex', justifyContent: 'start', width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                 <Button type="primary" style={{ margin: '10px 0' }}>
                     <Link to='/workshop/create'>Add new repair</Link>
                 </Button>

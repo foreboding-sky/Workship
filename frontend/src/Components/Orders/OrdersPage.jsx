@@ -12,15 +12,24 @@ const OrdersPage = () => {
 
     useEffect(() => {
         console.log("useEffect on OrdersPage");
-        axios.get("api/Workshop/orders").then(res => {
+        axios.get("api/Workshop/orders/unprocessed").then(res => {
             setArray(res.data);
             console.log(res.data);
         })
     }, [])
 
 
-    const ChangeStatus = (record) => {
-        //change order status
+    const ChangeStatus = async (record) => {
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            console.log(record);
+            let result = await axios.post("api/Workshop/orders/process/" + record.id);
+            const newArray = array.filter(item => item.id !== result.id);
+            console.log(newArray);
+            setArray(newArray);
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
     };
 
     const DeleteOrder = async (record) => {
@@ -37,24 +46,12 @@ const OrdersPage = () => {
     };
 
     const columns = [
-        // {
-        //     title: "Market",
-        //     dataIndex: "market",
-        //     key: "market",
-        //     render: market => market
-        // },
         {
             title: "Device",
             dataIndex: ["product"],
             key: "specialist",
             render: (record) => <p>{record.device.brand} {record.device.model}</p> //Display brand as "text" and model
         },
-        // {
-        //     title: "Client",
-        //     dataIndex: ["client", "fullName"],
-        //     key: "client",
-        //     render: client => client //Display client's fullname
-        // },
         {
             title: "Product", //TODO HERE
             dataIndex: ["product", "title"],
@@ -78,32 +75,29 @@ const OrdersPage = () => {
             title: "Change status", //TODO HERE
             dataIndex: "status",
             key: "status",
+            width: 150,
             render: (_, record) => {
                 return (<Button type="primary" block onClick={() => ChangeStatus(record)}>
-                    Edit
+                    Done
                 </Button>)
             }
         },
-        {
-            title: "Delete", //TODO HERE
-            dataIndex: "delete",
-            key: "delete",
-            render: (_, record) => {
-                return (<Button type="primary" block onClick={() => DeleteOrder(record)}>
-                    Delete
-                </Button>)
-            }
-        },
+        //{
+        //     title: "Delete",
+        //     dataIndex: "delete",
+        //     key: "delete",
+        //     width: 150,
+        //     render: (_, record) => {
+        //         return (<Button type="primary" block onClick={() => DeleteOrder(record)}>
+        //             Delete
+        //         </Button>)
+        //     }
+        //},
     ]
 
     return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: 'start', width: '100%' }}>
-                <Button type="primary" style={{ margin: '10px 0' }}>
-                    <Link to='/orders/create'>Add new order</Link>
-                </Button>
-            </div>
-            <Table dataSource={array} columns={columns} rowKey="id" />
+        <div style={{ margin: 10 }}>
+            <Table dataSource={array} columns={columns} rowKey="id" style={{ minWidth: '900px' }} />
         </div>
     );
 }

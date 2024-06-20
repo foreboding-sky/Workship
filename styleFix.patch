@@ -1,0 +1,182 @@
+Subject: [PATCH] styleFix
+---
+Index: frontend/src/Components/Repairs/CreateRepair.jsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/frontend/src/Components/Repairs/CreateRepair.jsx b/frontend/src/Components/Repairs/CreateRepair.jsx
+--- a/frontend/src/Components/Repairs/CreateRepair.jsx	(revision a9fbb4cafb4c12be805ecc215ccfb698b9d45852)
++++ b/frontend/src/Components/Repairs/CreateRepair.jsx	(date 1718714746674)
+@@ -204,7 +204,7 @@
+     }, [])
+ 
+     return (
+-        <div style={{ width: "100%" }}>
++        <div style={{ width: "100%",display: "flex", justifyContent: "center" }}>
+             <Modal title="Server response" open={modalVisible} onOk={handleModalOk} onCancel={() => setModalVisible(false)}>
+                 <p>{modalContent}</p>
+             </Modal>
+@@ -255,7 +255,7 @@
+                     label="Phone Number"
+                     rules={[{ required: true, message: 'Please input your phone number!' }]}
+                 >
+-                    <InputNumber maxLength={12} style={{ width: "100%" }} />
++                    <InputNumber placeholder={'Phone Number'} maxLength={12} style={{ width: "100%" }} />
+                 </Form.Item>
+                 <Form.Item name="device_type" label="Device type" rules={[{ required: true, message: 'Device type is required' }]}>
+                     <Select showSearch placeholder="Device Type">
+@@ -265,13 +265,13 @@
+                     </Select>
+                 </Form.Item>
+                 <Form.Item name="device_brand" label="Brand">
+-                    <Input />
++                    <Input placeholder={'Brand'} />
+                 </Form.Item>
+                 <Form.Item name="device_model" label="Model">
+-                    <Input />
++                    <Input placeholder={'Model'} />
+                 </Form.Item>
+                 <Form.Item name="complaint" label="Complaint">
+-                    <Input />
++                    <Input placeholder={'Complaint'} />
+                 </Form.Item>
+                 <p>Add Services</p>
+                 <Form.List name="services">
+@@ -281,8 +281,9 @@
+                                 <div key={key}
+                                     style={{
+                                         display: "flex", marginBottom: "8px", justifyContent: 'space-between',
+-                                        alignItems: "center", gap: "5px", height: "fit-content", width: "100%"
++                                        alignItems: "center", gap: "5px", height: "32px", width: "100%"
+                                     }}>
++                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
+                                     <div style={{
+                                         display: "grid", gridTemplateColumns: "repeat(2, 1fr)",
+                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
+@@ -306,11 +307,10 @@
+                                             <Input />
+                                         </Form.Item>
+                                     </div>
+-                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
+                                 </div>
+                             ))}
+-                            <Form.Item>
+-                                <Button type="dashed" onClick={add} block icon={<PlusOutlined />}>
++                            <Form.Item style={{display: "flex", justifyContent: 'end'}}>
++                                <Button style={{width: '661px'}} type="dashed" onClick={add} block icon={<PlusOutlined />}>
+                                     Add service
+                                 </Button>
+                             </Form.Item>
+@@ -325,8 +325,9 @@
+                                 <div key={key}
+                                     style={{
+                                         display: "flex", marginBottom: "8px", justifyContent: 'space-between',
+-                                        alignItems: "center", gap: "5px", height: "fit-content", width: "100%"
++                                        alignItems: "center", gap: "5px", height: "32px", width: "100%"
+                                     }}>
++                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
+                                     <div style={{
+                                         display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
+                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
+@@ -362,11 +363,10 @@
+                                             <Input />
+                                         </Form.Item>
+                                     </div>
+-                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
+                                 </div>
+                             ))}
+-                            <Form.Item>
+-                                <Button type="dashed" onClick={add} block icon={<PlusOutlined />}>
++                            <Form.Item style={{display: "flex", justifyContent: 'end'}}>
++                                <Button style={{width: '661px'}} type="dashed" onClick={add} block icon={<PlusOutlined />}>
+                                     Add item
+                                 </Button>
+                             </Form.Item>
+@@ -381,8 +381,9 @@
+                                 <div key={key}
+                                     style={{
+                                         display: "flex", marginBottom: "8px", justifyContent: 'space-between',
+-                                        alignItems: "center", gap: "5px", height: "fit-content", width: "100%"
++                                        alignItems: "center", gap: "5px", height: "32px", width: "100%"
+                                     }}>
++                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
+                                     <div style={{
+                                         display: "grid", gridTemplateColumns: "repeat(5, 1fr)",
+                                         gridTemplateRows: "1fr", justifyContent: 'center', height: "100%", width: "100%"
+@@ -410,28 +411,27 @@
+                                             <Input />
+                                         </Form.Item>
+                                     </div>
+-                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ margin: "0 10px" }} />
+                                 </div>
+                             ))}
+-                            <Form.Item>
+-                                <Button type="dashed" onClick={add} block icon={<PlusOutlined />}>
++                            <Form.Item style={{display: "flex", justifyContent: 'end'}}>
++                                <Button style={{width: '661px'}} type="dashed" onClick={add} block icon={<PlusOutlined />}>
+                                     Add ordered item
+                                 </Button>
+                             </Form.Item>
+                         </>
+                     )}
+                 </Form.List>
+-                <Form.Item name="comment" label="Comment">
+-                    <TextArea rows={4} />
++                <Form.Item style={{display: "flex", justifyContent: 'end'}} name="comment" >
++                    <TextArea style={{width: 661}} placeholder={'Comment'} rows={4} />
+                 </Form.Item>
+-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '10px' }}>
++                <div style={{ display: 'flex', width: '100%', justifyContent: "flex-end", gap:'10px' }}>
+                     <Form.Item>
+-                        <Button type="primary" htmlType='submit' style={{ width: "100%" }}>
++                        <Button type="primary" htmlType='submit' style={{ width: "325px" }}>
+                             Submit
+                         </Button>
+                     </Form.Item>
+                     <Form.Item>
+-                        <Button type="primary" block style={{ width: "100%", backgroundColor: '#d9534f', color: 'white' }} onClick={() => NavBack()}>
++                        <Button type="primary" block style={{ width: "325px", backgroundColor: '#d9534f', color: 'white' }} onClick={() => NavBack()}>
+                             Cancel
+                         </Button>
+                     </Form.Item>
+@@ -441,4 +441,4 @@
+     );
+ }
+ 
+-export default CreateRepairPage;
+\ No newline at end of file
++export default CreateRepairPage;
+Index: frontend/src/Components/Layouts/AppLayout.jsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/frontend/src/Components/Layouts/AppLayout.jsx b/frontend/src/Components/Layouts/AppLayout.jsx
+--- a/frontend/src/Components/Layouts/AppLayout.jsx	(revision a9fbb4cafb4c12be805ecc215ccfb698b9d45852)
++++ b/frontend/src/Components/Layouts/AppLayout.jsx	(date 1718705693027)
+@@ -15,7 +15,7 @@
+     ]
+ 
+     return (
+-        <Layout style={{ height: "100vh" }}> {/* TODO fix style here */}
++        <Layout style={{ minHeight: "100vh" }}>
+             <Sider>
+                 <Menu
+                     defaultSelectedKeys={['1']}
+@@ -27,7 +27,7 @@
+                     Workshop
+                 </Header>
+ 
+-                <Content className="site-layout" style={{ padding: '0 50px' }}>
++                <Content className="site-layout" style={{ display: "flex", justifyContent: "center" }}>
+                     {children}
+                 </Content>
+                 <Footer style={{ textAlign: 'center' }}>Workshop app</Footer>
+@@ -36,4 +36,4 @@
+     );
+ }
+ 
+-export default AppLayout;
+\ No newline at end of file
++export default AppLayout;

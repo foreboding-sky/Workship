@@ -49,14 +49,14 @@ const EditSpecialistPage = () => {
     };
 
     return (
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <Form form={form} layout="horizontal" labelCol={{ span: 4 }} style={{ width: "100%", maxWidth: 500, margin: '10px 0' }} onFinish={onSubmit}>
                 <Form.Item name="full_name" label="Full Name"
                     rules={[{ required: true, message: "Please input specialist's full name!" }]}>
-                    <Input />
+                    <Input placeholder={'Full name'} />
                 </Form.Item>
-                <Form.Item name="comment" label="Comment">
-                    <TextArea rows={4} />
+                <Form.Item style={{ display: "flex", justifyContent: 'end' }} name="comment" >
+                    <TextArea style={{ width: 661 }} placeholder={'Comment'} rows={4} />
                 </Form.Item>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '10px' }}>
                     <Form.Item>

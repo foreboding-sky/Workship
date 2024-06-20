@@ -56,38 +56,35 @@ const CreateStorageItemPage = () => {
         (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
     return (
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <Form layout="horizontal" labelCol={{ span: 4 }} style={{ width: "100%", maxWidth: 600, margin: '10px 0' }} onFinish={onSubmit}>
                 <Form.Item name="device_type" label="Device type" rules={[{ required: true, message: 'Device type is required' }]}>
-                    <Select showSearch placeholder="Device Type">
+                    <Select showSearch placeholder="Device Type" style={{ textAlign: 'left' }}>
                         {deviceTypes.map(deviceType => {
                             return <Select.Option filterOption={filterOption} key={deviceType} value={deviceType}>{deviceType}</Select.Option>
                         })}
                     </Select>
                 </Form.Item>
                 <Form.Item name="device_brand" label="Brand">
-                    <Input />
+                    <Input placeholder={'Device brand'} />
                 </Form.Item>
                 <Form.Item name="device_model" label="Model">
-                    <Input />
+                    <Input placeholder={'Device model'} />
                 </Form.Item>
                 <Form.Item name="product_type" label="Product Type"
                     rules={[{ required: true, message: "Please input Product Type!" }]}>
-                    <Select showSearch placeholder="Product Type">
+                    <Select showSearch placeholder="Product Type" style={{ textAlign: 'left' }}>
                         {itemTypes && itemTypes.map(itemType => {
                             return <Select.Option filterOption={filterOption} key={itemType} value={itemType}>{itemType}</Select.Option>
                         })}
                     </Select>
                 </Form.Item>
-                <Form.Item name="product_title" label="Product Name"
+                <Form.Item name="product_title" label="Name"
                     rules={[{ required: true, message: "Please input Product Name!" }]}>
-                    <Input />
+                    <Input placeholder={'Product name'} />
                 </Form.Item>
                 <Form.Item name="price" label="Price">
-                    <Input />
-                </Form.Item>
-                <Form.Item name="quantity" label="Quantity">
-                    <Input />
+                    <Input placeholder={'Product Number'} />
                 </Form.Item>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '10px' }}>
                     <Form.Item>
