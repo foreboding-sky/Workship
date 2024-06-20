@@ -371,7 +371,7 @@ const EditRepairPage = () => {
                         </>
                     )}
                 </Form.List>
-                <p>Add Products</p>
+                <p>Add Available Products</p>
                 <Form.List name="products">
                     {(fields, { add, remove }) => (
                         <>
