@@ -28,60 +28,132 @@ namespace Workshop.Data
 
         private void EnsurePopulated()
         {
+            List<Client> clients = new List<Client>();
             if (!Clients.Any())
             {
-                Clients.AddRange(
-                    new Client { FullName = "John Doe", Phone = "380991234567" },
-                    new Client { FullName = "Andrew Duh", Phone = "380996667890" },
-                    new Client { FullName = "Valeria Chan", Phone = "380993434345" },
-                    new Client { FullName = "Barak Obama", Phone = "380998769034" },
-                    new Client { FullName = "Vitaliy Kim", Phone = "380998976403" },
-                    new Client { FullName = "Kaneko Ken", Phone = "380992281337" }
-                );
-                SaveChanges();
-            }
+                clients.AddRange(new List<Client> {
+                    new Client { Id = Guid.NewGuid(), FullName = "John Doe", Phone = "380991234567" },
+                    new Client { Id = Guid.NewGuid(), FullName = "Andrew Duh", Phone = "380996667890" },
+                    new Client { Id = Guid.NewGuid(), FullName = "Valeria Chan", Phone = "380993434345" },
+                    new Client { Id = Guid.NewGuid(), FullName = "Barak Obama", Phone = "380998769034" },
+                    new Client { Id = Guid.NewGuid(), FullName = "Vitaliy Kim", Phone = "380998976403" },
+                    new Client { Id = Guid.NewGuid(), FullName = "Kaneko Ken", Phone = "380992281337" }
+                });
 
+                Clients.AddRange(clients);
+
+            }
+            List<Specialist> specialists = new List<Specialist>();
             if (!Specialists.Any())
             {
-                Specialists.AddRange(
-                    new Specialist { FullName = "Vanya", Comment = "Comment" },
-                    new Specialist { FullName = "Andrew" }
-                );
-                SaveChanges();
+                specialists.AddRange(new List<Specialist>
+                {
+                    new Specialist { Id = Guid.NewGuid(), FullName = "Vanya", Comment = "Comment" },
+                    new Specialist { Id = Guid.NewGuid(), FullName = "Andrew" }
+                });
+                Specialists.AddRange(specialists);
+
             }
 
+            List<Device> devices = new List<Device>();
             if (!Devices.Any())
             {
-                Devices.AddRange(
-                    new Device { Brand = "Apple", Model = "Iphone X", Type = DeviceType.Phone },
-                    new Device { Brand = "Xiaomi", Model = "Redmi 9", Type = DeviceType.Phone },
-                    new Device { Brand = "Huawei", Model = "P Smart Plus", Type = DeviceType.Phone },
-                    new Device { Brand = "Samsung", Model = "S23", Type = DeviceType.Phone }
-                );
-                SaveChanges();
+                devices.AddRange(new List<Device> {
+                    new Device { Id = Guid.NewGuid(), Brand = "Apple", Model = "Iphone X", Type = DeviceType.Phone },
+                    new Device { Id = Guid.NewGuid(), Brand = "Xiaomi", Model = "Redmi 9", Type = DeviceType.Phone },
+                    new Device { Id = Guid.NewGuid(), Brand = "Huawei", Model = "P Smart Plus", Type = DeviceType.Phone },
+                    new Device { Id = Guid.NewGuid(), Brand = "Samsung", Model = "S23", Type = DeviceType.Phone },
+                    new Device { Id = Guid.NewGuid(), Brand = "Pixel", Model = "8", Type = DeviceType.Phone }
+                });
+                Devices.AddRange(devices);
+
             }
 
+            List<Service> services = new List<Service>();
             if (!Services.Any())
             {
-                Services.AddRange(
-                    new Service { Name = "Screen Replacement", Price = 600 },
-                    new Service { Name = "Battery Replacement", Price = 400 },
-                    new Service { Name = "Charge Board Replacement", Price = 400 },
-                    new Service { Name = "Back Cover Replacement", Price = 300 },
-                    new Service { Name = "Motherboard repair", Price = 1000 }
-                );
-                SaveChanges();
+
+                services.AddRange(new List<Service> {
+                    new Service { Id = Guid.NewGuid(), Name = "Screen Replacement", Price = 600 },
+                    new Service { Id = Guid.NewGuid(), Name = "Battery Replacement", Price = 400 },
+                    new Service { Id = Guid.NewGuid(), Name = "Charge Board Replacement", Price = 400 },
+                    new Service { Id = Guid.NewGuid(), Name = "Back Cover Replacement", Price = 300 },
+                    new Service { Id = Guid.NewGuid(), Name = "Motherboard repair", Price = 1000 }
+                });
+                Services.AddRange(services);
+
             }
 
+            List<StockItem> stockItems = new List<StockItem>();
             if (!Stock.Any())
             {
-                Stock.AddRange(
-                    new StockItem { Item = new Item { Type = ItemType.LCD, Title = "Pixel 8 LCD", Device = new Device { Brand = "Pixel", Model = "8", Type = DeviceType.Phone } }, Price = 8500, Quantity = 2 },
-                    new StockItem { Item = new Item { Type = ItemType.Battery, Title = "Samsung A515 Battery", Device = new Device { Brand = "Samsung", Model = "A515", Type = DeviceType.Phone } }, Price = 400, Quantity = 12 },
-                    new StockItem { Item = new Item { Type = ItemType.BackCover, Title = "Xiaomi Redmi Note 8 Back Cover", Device = new Device { Brand = "Xiaomi", Model = "Redmi Note ", Type = DeviceType.Phone } }, Price = 250, Quantity = 3 }
-                );
-                SaveChanges();
+                stockItems.AddRange(new List<StockItem> {
+                    new StockItem
+                    {
+                        Item = new Item
+                        {
+                            Id = Guid.NewGuid(),
+                            Type = ItemType.LCD,
+                            Title = "Pixel 8 LCD",
+                            Device = new Device { Id = Guid.Parse("2e5b3fb8-9839-42ba-87ea-441e9680b8f7") }
+                        },
+                        Price = 8500,
+                        Quantity = 2
+                    },
+                    new StockItem
+                    {
+                        Item = new Item
+                        {
+                            Id = Guid.NewGuid(),
+                            Type = ItemType.Battery,
+                            Title = "Samsung A515 Battery",
+                            Device = new Device
+                            {
+                                Brand = "Samsung",
+                                Model = "A515",
+                                Type = DeviceType.Phone
+                            }
+                        },
+                        Price = 400,
+                        Quantity = 12
+                    },
+                    new StockItem
+                    {
+                        Item = new Item
+                        {
+                            Id = Guid.NewGuid(),
+                            Type = ItemType.BackCover,
+                            Title = "Xiaomi Redmi Note 8 Back Cover",
+                            Device = new Device
+                            {
+                                Brand = "Xiaomi",
+                                Model = "Redmi Note ",
+                                Type = DeviceType.Phone
+                            }
+                        },
+                        Price = 250,
+                        Quantity = 3
+                    }
+                });
+                Stock.AddRange(stockItems);
+
             }
+
+            if (!Repairs.Any())
+            {
+                Repairs.AddRange(
+                    new Repair
+                    {
+                        Specialist = specialists[0],
+                        Client = clients[0],
+                        Device = devices[0],
+                        Complaint = "device not booting",
+                        Status = RepairStatus.Accepted
+                    }
+                );
+
+            }
+            SaveChanges();
         }
 
         protected override void OnModelCreating(ModelBuilder mb)

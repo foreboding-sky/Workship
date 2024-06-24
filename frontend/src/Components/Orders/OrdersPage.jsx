@@ -24,7 +24,7 @@ const OrdersPage = () => {
             axios.defaults.baseURL = "http://localhost:5000/";
             console.log(record);
             let result = await axios.post("api/Workshop/orders/process/" + record.id);
-            const newArray = array.filter(item => item.id !== result.id);
+            const newArray = array.filter(item => item.id !== record.id);
             console.log(newArray);
             setArray(newArray);
         } catch (error) {

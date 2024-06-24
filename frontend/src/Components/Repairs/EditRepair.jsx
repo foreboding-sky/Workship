@@ -289,7 +289,7 @@ const EditRepairPage = () => {
                                         onChange={onClientNameChange}
                                         onKeyDown={(e) => e.stopPropagation()} />
                                     <Button type="text" icon={<PlusOutlined />} onClick={addClient}>
-                                        Add item
+                                        Add new client
                                     </Button>
                                 </Space>
                             </>

@@ -231,13 +231,13 @@ const CreateRepairPage = () => {
                                 <Divider style={{ margin: '8px 0', }} />
                                 <Space style={{ padding: '0 8px 4px', }}>
                                     <Input
-                                        placeholder="Please enter client"
+                                        placeholder="Please enter new client"
                                         ref={clientNameRef}
                                         value={newClientName}
                                         onChange={onClientNameChange}
                                         onKeyDown={(e) => e.stopPropagation()} />
                                     <Button type="text" icon={<PlusOutlined />} onClick={addClient}>
-                                        Add item
+                                        Add new client
                                     </Button>
                                 </Space>
                             </>
