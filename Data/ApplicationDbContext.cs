@@ -118,6 +118,12 @@ namespace Workshop.Data
                     new StockItem
                     {
                         Item = new Item
+                        { Id = Guid.NewGuid(), Type = ItemType.LCD, Title = "Samsung S23 LCD", Device = devices.First(d => d.Brand.Contains("Samsung") && d.Model.Contains("S23"))},
+                        Price = 9800, Quantity = 2
+                    },
+                    new StockItem
+                    {
+                        Item = new Item
                         { Id = Guid.NewGuid(), Type = ItemType.BackCover, Title = "Xiaomi Redmi 9 Back Cover", Device = devices.First(d => d.Brand.Contains("Xiaomi") && d.Model.Contains("Redmi 9"))},
                         Price = 250, Quantity = 3
                     },
@@ -137,6 +143,24 @@ namespace Workshop.Data
                     {
                         Item = new Item
                         { Id = Guid.NewGuid(), Type = ItemType.Battery, Title = "Pixel 8 Battery", Device = devices.First(d => d.Brand.Contains("Pixel") && d.Model.Contains("8"))},
+                        Price = 500, Quantity = 5
+                    },
+                    new StockItem
+                    {
+                        Item = new Item
+                        { Id = Guid.NewGuid(), Type = ItemType.LCD, Title = "Huawei P Smart Plus LCD", Device = devices.First(d => d.Brand.Contains("Huawei") && d.Model.Contains("P Smart Plus"))},
+                        Price = 500, Quantity = 5
+                    },
+                    new StockItem
+                    {
+                        Item = new Item
+                        { Id = Guid.NewGuid(), Type = ItemType.Battery, Title = "Huawei P Smart Plus Battery", Device = devices.First(d => d.Brand.Contains("Huawei") && d.Model.Contains("P Smart Plus"))},
+                        Price = 500, Quantity = 5
+                    },
+                    new StockItem
+                    {
+                        Item = new Item
+                        { Id = Guid.NewGuid(), Type = ItemType.BackCover, Title = "Huawei P Smart Plus Back Cover", Device = devices.First(d => d.Brand.Contains("Huawei") && d.Model.Contains("P Smart Plus"))},
                         Price = 500, Quantity = 5
                     }
                 });
@@ -160,7 +184,7 @@ namespace Workshop.Data
                         Specialist = specialists[0],
                         Client = clients[1],
                         Device = devices[1],
-                        Complaint = "device not booting",
+                        Complaint = "battary replacement",
                         Status = RepairStatus.Accepted
                     },
                     new Repair
@@ -176,7 +200,7 @@ namespace Workshop.Data
                         Specialist = specialists[1],
                         Client = clients[3],
                         Device = devices[3],
-                        Complaint = "device not booting",
+                        Complaint = "LCD replacement",
                         Status = RepairStatus.Accepted
                     },
                     new Repair
