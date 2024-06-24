@@ -428,3 +428,5 @@ sketch
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/csharp,visualstudiocode,react
+.vscode/launch.json
+.vscode/tasks.json
