@@ -13,13 +13,16 @@ namespace Workshop.Models
 
         public bool Equals(RepairService? x, RepairService? y)
         {
-            // Compare based on RepairService.Service.Id if both services are not null
-            return x.Id == y.Id;
+            if (x.Id != Guid.Empty && y.Id != Guid.Empty)
+            {
+                return x.Id == y.Id;
+            }
+
+            return x.Service?.Id == y.Service?.Id;
         }
 
         public int GetHashCode([DisallowNull] RepairService obj)
         {
-            // Use RepairService.Service.Id if Service is not null
             return obj.Id.GetHashCode();
         }
     }

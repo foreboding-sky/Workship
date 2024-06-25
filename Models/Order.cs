@@ -19,7 +19,12 @@ namespace Workshop.Models
 
         public bool Equals(Order? x, Order? y)
         {
-            return x?.Id == y?.Id;
+            if (x.Id != Guid.Empty && y.Id != Guid.Empty)
+            {
+                return x.Id == y.Id;
+            }
+
+            return x.Product?.Title == y.Product?.Title;
         }
 
         public int GetHashCode([DisallowNull] Order obj)
